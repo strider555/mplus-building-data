@@ -69,13 +69,13 @@
         </div>
         <div class="meta-item">
           <span class="meta-key">DRAWING</span>
-          <span class="meta-val">Section B</span>
+          <span class="meta-val">415_DR_2110_002 Section B</span>
         </div>
       </div>
     </div>
 
     <div class="blueprint-canvas-wrap">
-      <svg class="blueprint-svg" id="blueprint-svg" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
+            <svg class="blueprint-svg" id="blueprint-svg" viewBox="0 0 1000 650" preserveAspectRatio="xMidYMid meet">
         <!-- Grid -->
         <defs>
           <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
@@ -84,115 +84,213 @@
           <pattern id="grid-major" width="100" height="100" patternUnits="userSpaceOnUse">
             <path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
           </pattern>
-          <!-- Dimension marker -->
-          <marker id="dim-start" viewBox="0 0 10 10" refX="0" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(255,255,255,0.4)"/>
-          </marker>
-          <marker id="dim-end" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M 10 0 L 0 5 L 10 10 z" fill="rgba(255,255,255,0.4)"/>
-          </marker>
         </defs>
         
-        <rect width="1000" height="600" fill="url(#grid)"/>
-        <rect width="1000" height="600" fill="url(#grid-major)"/>
+        <rect width="1000" height="650" fill="url(#grid)"/>
+        <rect width="1000" height="650" fill="url(#grid-major)"/>
         
         <!-- Ground line -->
-        <line x1="0" y1="420" x2="1000" y2="420" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="5,5"/>
-        <text x="30" y="415" fill="rgba(255,255,255,0.3)" font-size="9" font-family="IBM Plex Mono">±0.000 GROUND LEVEL</text>
+        <line x1="50" y1="430" x2="950" y2="430" stroke="rgba(255,255,255,0.2)" stroke-width="0.8" stroke-dasharray="6,4"/>
+        <text x="60" y="425" fill="rgba(255,255,255,0.3)" font-size="8" font-family="IBM Plex Mono">±0.000 GROUND LEVEL</text>
 
-        <!-- Underground - Found Space -->
+        <!-- 19. Victoria Harbour (left) -->
+        <g class="bp-layer" data-floor="harbour">
+          <rect x="50" y="432" width="120" height="40" fill="rgba(74,158,255,0.04)" stroke="rgba(74,158,255,0.15)" stroke-width="0.5"/>
+          <text x="110" y="455" text-anchor="middle" fill="rgba(74,158,255,0.4)" font-size="8" font-family="IBM Plex Mono">19. VICTORIA HARBOUR</text>
+        </g>
+
+        <!-- 18. Waterfront Promenade -->
+        <g class="bp-layer" data-floor="promenade">
+          <rect x="170" y="430" width="80" height="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+          <text x="210" y="437" text-anchor="middle" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">18. PROMENADE</text>
+        </g>
+
+        <!-- 20. Airport Express Tunnel + 21. MTR/Elements Cooling -->
+        <g class="bp-layer" data-floor="tunnel">
+          <rect x="400" y="530" width="80" height="35" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1" rx="4" class="bp-stroke"/>
+          <rect x="490" y="535" width="50" height="25" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.8" rx="2"/>
+          <text x="440" y="550" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="7" font-family="IBM Plex Mono">20. AIRPORT EXPRESS</text>
+          <text x="440" y="560" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="6" font-family="IBM Plex Mono">LINE TUNNEL</text>
+          <text x="515" y="550" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="6" font-family="IBM Plex Mono">21. MTR/</text>
+          <text x="515" y="558" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="6" font-family="IBM Plex Mono">COOLING</text>
+        </g>
+
+        <!-- 1. Found Space + 2. The Studio (underground) -->
         <g class="bp-layer" data-floor="found-space">
-          <path d="M 300,440 L 300,530 Q 500,560 700,530 L 700,440 Z" 
-                fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.2" class="bp-stroke"/>
-          <path d="M 320,500 C 400,510 600,510 680,500" 
-                fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.8" stroke-dasharray="4,4"/>
-          <text x="500" y="490" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="10" font-family="IBM Plex Mono">FOUND SPACE (B2)</text>
-          <text x="500" y="520" text-anchor="middle" fill="rgba(255,255,255,0.25)" font-size="8" font-family="IBM Plex Mono">MTR Airport Express Tunnel</text>
+          <path d="M 350,440 L 350,510 Q 500,530 650,510 L 650,440" 
+                fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.6)" stroke-width="1.2" class="bp-stroke"/>
+          <!-- Internal division -->
+          <line x1="520" y1="440" x2="520" y2="510" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+          <text x="435" y="475" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="9" font-family="IBM Plex Mono">1. FOUND SPACE</text>
+          <text x="585" y="475" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="8" font-family="IBM Plex Mono">2. THE STUDIO</text>
         </g>
 
-        <!-- Podium -->
+        <!-- PODIUM: 3. Main Hall, 4. Atrium, 5. Galleries -->
         <g class="bp-layer" data-floor="podium">
-          <!-- Main podium outline -->
-          <rect x="200" y="320" width="600" height="100" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" class="bp-stroke"/>
-          <!-- Cantilever extensions -->
-          <line x1="160" y1="320" x2="200" y2="320" stroke="rgba(255,255,255,0.4)" stroke-width="1" stroke-dasharray="3,3"/>
-          <line x1="800" y1="320" x2="840" y2="320" stroke="rgba(255,255,255,0.4)" stroke-width="1" stroke-dasharray="3,3"/>
-          <!-- Floor divisions -->
-          <line x1="200" y1="345" x2="800" y2="345" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
-          <line x1="200" y1="370" x2="800" y2="370" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
-          <line x1="200" y1="395" x2="800" y2="395" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
-          <!-- Labels -->
-          <text x="210" y="338" fill="rgba(255,255,255,0.3)" font-size="8" font-family="IBM Plex Mono">L3 ROOF GARDEN</text>
-          <text x="210" y="363" fill="rgba(255,255,255,0.3)" font-size="8" font-family="IBM Plex Mono">L2 GALLERIES · MEDIATHEQUE</text>
-          <text x="210" y="388" fill="rgba(255,255,255,0.3)" font-size="8" font-family="IBM Plex Mono">L1 GALLERIES · CINEMA ×3</text>
-          <text x="210" y="413" fill="rgba(255,255,255,0.3)" font-size="8" font-family="IBM Plex Mono">GF LOBBY · ENTRANCE</text>
+          <!-- Podium outline (wide, 3 levels) -->
+          <rect x="250" y="350" width="500" height="80" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" class="bp-stroke"/>
+          <!-- Cantilever overhangs -->
+          <line x1="230" y1="350" x2="250" y2="350" stroke="rgba(255,255,255,0.4)" stroke-width="1" stroke-dasharray="3,3"/>
+          <line x1="750" y1="350" x2="770" y2="350" stroke="rgba(255,255,255,0.4)" stroke-width="1" stroke-dasharray="3,3"/>
+          
+          <!-- Floor divisions: GF, L1, L2 + Roof Garden level -->
+          <line x1="250" y1="370" x2="750" y2="370" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+          <line x1="250" y1="390" x2="750" y2="390" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+          <line x1="250" y1="410" x2="750" y2="410" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+          
+          <!-- Room labels per HdM section -->
+          <!-- L2: Galleries on both sides -->
+          <text x="340" y="365" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="8" font-family="IBM Plex Mono">5. GALLERIES</text>
+          <text x="660" y="365" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="8" font-family="IBM Plex Mono">5. GALLERIES</text>
+          <text x="500" y="363" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="7" font-family="IBM Plex Mono">4. ATRIUM</text>
+          
+          <!-- L1: Main Hall -->
+          <text x="500" y="385" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="8" font-family="IBM Plex Mono">3. MAIN HALL</text>
+          
+          <!-- GF -->
+          <text x="500" y="405" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="7" font-family="IBM Plex Mono">GROUND FLOOR · ENTRANCE</text>
+          
+          <!-- Basement/Parking -->
+          <text x="500" y="425" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="7" font-family="IBM Plex Mono">CINEMA · MEDIATHEQUE · LEARNING HUB</text>
         </g>
 
-        <!-- Tower -->
+        <!-- 12. Roof Garden (on top of podium, both sides) -->
+        <g class="bp-layer" data-floor="roof-garden">
+          <line x1="250" y1="350" x2="440" y2="350" stroke="rgba(100,180,100,0.4)" stroke-width="2"/>
+          <line x1="560" y1="350" x2="750" y2="350" stroke="rgba(100,180,100,0.4)" stroke-width="2"/>
+          <text x="345" y="345" text-anchor="middle" fill="rgba(100,180,100,0.5)" font-size="7" font-family="IBM Plex Mono">12. ROOF GARDEN</text>
+          <text x="655" y="345" text-anchor="middle" fill="rgba(100,180,100,0.5)" font-size="7" font-family="IBM Plex Mono">12. ROOF GARDEN</text>
+        </g>
+
+        <!-- TOWER (slender, centered) -->
         <g class="bp-layer" data-floor="tower">
-          <rect x="400" y="80" width="200" height="240" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" class="bp-stroke"/>
-          <!-- Floor lines -->
-          <line x1="400" y1="100" x2="600" y2="100" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
-          <line x1="400" y1="120" x2="600" y2="120" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
-          <line x1="400" y1="140" x2="600" y2="140" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
-          <line x1="400" y1="160" x2="600" y2="160" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
-          <line x1="400" y1="180" x2="600" y2="180" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
-          <line x1="400" y1="200" x2="600" y2="200" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
-          <line x1="400" y1="220" x2="600" y2="220" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
-          <line x1="400" y1="240" x2="600" y2="240" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
-          <line x1="400" y1="260" x2="600" y2="260" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
-          <line x1="400" y1="280" x2="600" y2="280" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
-          <line x1="400" y1="300" x2="600" y2="300" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
-          <!-- Labels -->
-          <text x="410" y="95" fill="rgba(255,255,255,0.3)" font-size="7" font-family="IBM Plex Mono">L20</text>
-          <text x="410" y="135" fill="rgba(255,255,255,0.3)" font-size="7" font-family="IBM Plex Mono">L15 HSUHK</text>
-          <text x="410" y="155" fill="rgba(255,255,255,0.3)" font-size="7" font-family="IBM Plex Mono">L13 LINGNAN U</text>
-          <text x="410" y="195" fill="rgba(255,255,255,0.3)" font-size="7" font-family="IBM Plex Mono">L11 M+ LOUNGE</text>
-          <text x="410" y="255" fill="rgba(255,255,255,0.3)" font-size="7" font-family="IBM Plex Mono">RESEARCH CENTRE</text>
-          <text x="410" y="295" fill="rgba(255,255,255,0.3)" font-size="7" font-family="IBM Plex Mono">OFFICES</text>
+          <rect x="460" y="100" width="80" height="250" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" class="bp-stroke"/>
+          
+          <!-- Tower floor lines (11 floors: L6-L11 per HdM) -->
+          <line x1="460" y1="123" x2="540" y2="123" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          <line x1="460" y1="146" x2="540" y2="146" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          <line x1="460" y1="169" x2="540" y2="169" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          <line x1="460" y1="192" x2="540" y2="192" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          <line x1="460" y1="215" x2="540" y2="215" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          <line x1="460" y1="238" x2="540" y2="238" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          <line x1="460" y1="261" x2="540" y2="261" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          <line x1="460" y1="284" x2="540" y2="284" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          <line x1="460" y1="307" x2="540" y2="307" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          <line x1="460" y1="330" x2="540" y2="330" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          
+          <!-- Floor labels (right side, per HdM legend) -->
+          <text x="550" y="115" fill="rgba(255,255,255,0.35)" font-size="7" font-family="IBM Plex Mono">11</text>
+          <text x="550" y="138" fill="rgba(255,255,255,0.35)" font-size="7" font-family="IBM Plex Mono">11</text>
+          <text x="550" y="161" fill="rgba(255,255,255,0.35)" font-size="7" font-family="IBM Plex Mono">11</text>
+          <text x="550" y="184" fill="rgba(255,255,255,0.35)" font-size="7" font-family="IBM Plex Mono">10</text>
+          <text x="550" y="207" fill="rgba(255,255,255,0.35)" font-size="7" font-family="IBM Plex Mono">9</text>
+          <text x="550" y="230" fill="rgba(255,255,255,0.35)" font-size="7" font-family="IBM Plex Mono">8</text>
+          <text x="550" y="253" fill="rgba(255,255,255,0.35)" font-size="7" font-family="IBM Plex Mono">8</text>
+          <text x="550" y="276" fill="rgba(255,255,255,0.35)" font-size="7" font-family="IBM Plex Mono">8</text>
+          <text x="550" y="299" fill="rgba(255,255,255,0.35)" font-size="7" font-family="IBM Plex Mono">8</text>
+          <text x="550" y="322" fill="rgba(255,255,255,0.35)" font-size="7" font-family="IBM Plex Mono">7</text>
+          <text x="550" y="345" fill="rgba(255,255,255,0.35)" font-size="7" font-family="IBM Plex Mono">6</text>
+          
+          <!-- Named labels -->
+          <text x="450" y="115" text-anchor="end" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">RDE (F&B)</text>
+          <text x="450" y="184" text-anchor="end" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">ART-RELATED OACF</text>
+          <text x="450" y="207" text-anchor="end" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">M+ MEMBERS LOUNGE</text>
+          <text x="450" y="253" text-anchor="end" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">OFFICE</text>
+          <text x="450" y="322" text-anchor="end" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">RESEARCH CENTRE</text>
+          <text x="450" y="345" text-anchor="end" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">TERRACE RESTAURANT</text>
         </g>
 
-        <!-- LED Facade (right side of tower) -->
+        <!-- LED Facade (on tower face) -->
         <g class="bp-layer bp-led" data-floor="facade">
-          <rect x="600" y="80" width="4" height="240" fill="none" stroke="#e8c547" stroke-width="1" opacity="0.6" class="bp-led-line"/>
-          <text x="615" y="200" fill="#e8c547" font-size="8" font-family="IBM Plex Mono" opacity="0.7">LED FACADE</text>
-          <text x="615" y="212" fill="#e8c547" font-size="7" font-family="IBM Plex Mono" opacity="0.5">65.8m × 110m</text>
+          <rect x="538" y="102" width="4" height="246" fill="none" stroke="#e8c547" stroke-width="1.2" opacity="0.6" class="bp-led-line"/>
+          <text x="555" y="220" fill="#e8c547" font-size="7" font-family="IBM Plex Mono" opacity="0.7">M+ FACADE</text>
+          <text x="555" y="230" fill="#e8c547" font-size="6" font-family="IBM Plex Mono" opacity="0.5">(LED · HARBOUR SIDE)</text>
         </g>
 
-        <!-- Mega Trusses -->
+        <!-- 13/14. CSF Building (right side, separate structure) -->
+        <g class="bp-layer" data-floor="csf">
+          <rect x="780" y="280" width="100" height="150" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.5)" stroke-width="1" class="bp-stroke"/>
+          <line x1="780" y1="310" x2="880" y2="310" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          <line x1="780" y1="340" x2="880" y2="340" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          <line x1="780" y1="370" x2="880" y2="370" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          <line x1="780" y1="400" x2="880" y2="400" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          <text x="830" y="295" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="7" font-family="IBM Plex Mono">14. CONSERVATION LABS</text>
+          <text x="830" y="355" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="7" font-family="IBM Plex Mono">13. ART STORAGE</text>
+          <text x="830" y="415" text-anchor="middle" fill="rgba(255,255,255,0.25)" font-size="7" font-family="IBM Plex Mono">13. ART STORAGE</text>
+          <!-- CSF label -->
+          <text x="830" y="270" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="8" font-family="IBM Plex Mono">CSF BUILDING</text>
+        </g>
+
+        <!-- 15. Avenue + 16. Carriageway + 17. Parking (right ground level) -->
+        <g class="bp-layer" data-floor="access">
+          <rect x="760" y="430" width="60" height="15" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+          <text x="790" y="440" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="6" font-family="IBM Plex Mono">15. AVENUE</text>
+          <rect x="820" y="430" width="60" height="15" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+          <text x="850" y="440" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="6" font-family="IBM Plex Mono">16. CARRIAGEWAY</text>
+          <rect x="820" y="445" width="60" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+          <text x="850" y="463" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="6" font-family="IBM Plex Mono">17. PARKING</text>
+        </g>
+
+        <!-- Mega-trusses (supporting podium over tunnel) -->
         <g class="bp-layer" data-floor="trusses">
-          <line x1="280" y1="520" x2="350" y2="420" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
-          <line x1="380" y1="520" x2="420" y2="420" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
-          <line x1="500" y1="530" x2="500" y2="420" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
-          <line x1="620" y1="520" x2="580" y2="420" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
-          <line x1="720" y1="520" x2="650" y2="420" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
-          <text x="500" y="555" text-anchor="middle" fill="rgba(255,255,255,0.25)" font-size="8" font-family="IBM Plex Mono">5× MEGA-TRUSSES (Arup)</text>
+          <line x1="370" y1="520" x2="400" y2="430" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>
+          <line x1="430" y1="525" x2="450" y2="430" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>
+          <line x1="500" y1="528" x2="500" y2="430" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>
+          <line x1="570" y1="525" x2="550" y2="430" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>
+          <line x1="630" y1="520" x2="600" y2="430" stroke="rgba(255,255,255,0.25)" stroke-width="0.8"/>
+          <text x="500" y="580" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="7" font-family="IBM Plex Mono">5× MEGA-TRUSSES (Arup)</text>
         </g>
 
-        <!-- Dimensions -->
+        <!-- Dimension lines -->
         <g class="bp-dimensions">
-          <!-- Height dimension -->
-          <line x1="870" y1="80" x2="870" y2="420" stroke="rgba(255,255,255,0.25)" stroke-width="0.5" marker-start="url(#dim-start)" marker-end="url(#dim-end)"/>
-          <text x="880" y="250" fill="rgba(255,255,255,0.35)" font-size="9" font-family="IBM Plex Mono" transform="rotate(90,880,250)">65m</text>
+          <!-- Tower height -->
+          <line x1="430" y1="100" x2="430" y2="350" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+          <line x1="425" y1="100" x2="435" y2="100" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+          <line x1="425" y1="350" x2="435" y2="350" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+          <text x="420" y="225" text-anchor="end" fill="rgba(255,255,255,0.3)" font-size="8" font-family="IBM Plex Mono">65m</text>
           
           <!-- Podium width -->
-          <line x1="200" y1="570" x2="800" y2="570" stroke="rgba(255,255,255,0.25)" stroke-width="0.5" marker-start="url(#dim-start)" marker-end="url(#dim-end)"/>
-          <text x="500" y="585" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="IBM Plex Mono">~160m (podium)</text>
-          
-          <!-- Tower width -->
-          <line x1="400" y1="65" x2="600" y2="65" stroke="rgba(255,255,255,0.25)" stroke-width="0.5" marker-start="url(#dim-start)" marker-end="url(#dim-end)"/>
-          <text x="500" y="58" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="9" font-family="IBM Plex Mono">~40m (tower)</text>
+          <line x1="250" y1="600" x2="750" y2="600" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+          <line x1="250" y1="595" x2="250" y2="605" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+          <line x1="750" y1="595" x2="750" y2="605" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+          <text x="500" y="615" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="8" font-family="IBM Plex Mono">~160m (podium)</text>
         </g>
 
         <!-- Drawing border -->
-        <rect x="10" y="10" width="980" height="580" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <rect x="10" y="10" width="980" height="630" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
         
-        <!-- Title block (bottom right) -->
+        <!-- Title block (bottom right) per HdM style -->
         <g class="title-block">
-          <rect x="750" y="540" width="230" height="45" fill="rgba(0,0,0,0.5)" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
-          <text x="760" y="555" fill="rgba(255,255,255,0.5)" font-size="7" font-family="IBM Plex Mono">HERZOG & DE MEURON + TFP FARRELLS + ARUP</text>
-          <text x="760" y="568" fill="rgba(255,255,255,0.7)" font-size="9" font-family="IBM Plex Mono">M+ MUSEUM · SECTION B</text>
-          <text x="760" y="580" fill="rgba(255,255,255,0.35)" font-size="7" font-family="IBM Plex Mono">38 MUSEUM DRIVE, WKCD, HK · 2020</text>
+          <rect x="720" y="620" width="260" height="25" fill="rgba(0,0,0,0.5)" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
+          <text x="730" y="633" fill="rgba(255,255,255,0.5)" font-size="7" font-family="IBM Plex Mono">HERZOG & DE MEURON · 415_DR_2110_002 · SECTION B</text>
+          <text x="730" y="642" fill="rgba(255,255,255,0.3)" font-size="6" font-family="IBM Plex Mono">M+ MUSEUM · 38 MUSEUM DRIVE, WKCD, HONG KONG · 2020</text>
+        </g>
+
+        <!-- Legend (top-left, matching HdM style) -->
+        <g class="legend" transform="translate(30, 30)">
+          <text x="0" y="0" fill="rgba(255,255,255,0.5)" font-size="9" font-family="IBM Plex Mono" font-weight="500">M+</text>
+          <text x="0" y="14" fill="rgba(255,255,255,0.4)" font-size="7" font-family="IBM Plex Mono">Cross Section</text>
+          <text x="0" y="28" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono"> 1 Found Space</text>
+          <text x="0" y="38" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono"> 2 The Studio</text>
+          <text x="0" y="48" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono"> 3 Main Hall</text>
+          <text x="0" y="58" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono"> 4 Atrium</text>
+          <text x="0" y="68" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono"> 5 Galleries</text>
+          <text x="0" y="78" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono"> 6 Terrace Restaurant</text>
+          <text x="0" y="88" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono"> 7 Research Centre</text>
+          <text x="0" y="98" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono"> 8 Office</text>
+          <text x="0" y="108" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono"> 9 M+ Members Lounge</text>
+          <text x="0" y="118" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">10 Art-related OACF</text>
+          <text x="0" y="128" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">11 RDE (F&amp;B)</text>
+          <text x="0" y="138" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">12 Roof Garden</text>
+          <text x="0" y="148" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">13 CSF Art Storage</text>
+          <text x="0" y="158" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">14 CSF Conservation Labs</text>
+          <text x="0" y="168" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">15 Avenue</text>
+          <text x="0" y="178" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">16 Carriageway</text>
+          <text x="0" y="188" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">17 Parking</text>
+          <text x="0" y="198" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">18 Waterfront Promenade</text>
+          <text x="0" y="208" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">19 Victoria Harbour</text>
+          <text x="0" y="218" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">20 Airport Express Line Tunnel</text>
+          <text x="0" y="228" fill="rgba(255,255,255,0.25)" font-size="6" font-family="IBM Plex Mono">21 MTR / Elements Cooling Main</text>
         </g>
       </svg>
 
@@ -214,12 +312,12 @@
       <div class="spec-row">
         <span class="spec-key">HEIGHT</span>
         <span class="spec-line"></span>
-        <span class="spec-val">65 m</span>
+        <span class="spec-val">65 m (tower)</span>
       </div>
       <div class="spec-row">
         <span class="spec-key">FLOORS</span>
         <span class="spec-line"></span>
-        <span class="spec-val">20 above + 3 below</span>
+        <span class="spec-val">B1–L11 (tower) + CSF building</span>
       </div>
       <div class="spec-row">
         <span class="spec-key">TOTAL AREA</span>
@@ -234,7 +332,7 @@
       <div class="spec-row">
         <span class="spec-key">FACADE</span>
         <span class="spec-line"></span>
-        <span class="spec-val">140,000 ceramic tiles + LED</span>
+        <span class="spec-val">140,000 ceramic tiles + LED louvres</span>
       </div>
       <div class="spec-row">
         <span class="spec-key">LED SCREEN</span>
@@ -255,6 +353,11 @@
         <span class="spec-key">CINEMAS</span>
         <span class="spec-line"></span>
         <span class="spec-val">3</span>
+      </div>
+      <div class="spec-row">
+        <span class="spec-key">CSF BUILDING</span>
+        <span class="spec-line"></span>
+        <span class="spec-val">Art Storage + Conservation Labs</span>
       </div>
       <div class="spec-row">
         <span class="spec-key">ARCHITECT</span>

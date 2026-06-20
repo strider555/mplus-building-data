@@ -1,5 +1,5 @@
 /**
- * Blueprint SVG interactions
+ * Blueprint SVG interactions (v2 - Accurate per HdM Section B)
  * Hover tooltips + click highlights for blueprint layers
  */
 
@@ -9,12 +9,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const tooltipDesc = tooltip.querySelector('.bp-tooltip-desc');
   const svgWrap = document.querySelector('.blueprint-canvas-wrap');
   
+  // Floor data per HdM 415_DR_2110_002_Section B legend
   const floorData = {
-    'found-space': { title: 'Found Space (B2)', desc: 'Underground hall following MTR tunnel contours · Large installations' },
-    'podium': { title: 'Podium (G–3F)', desc: '33 galleries · 17,000 m² · Cinema ×3 · Roof Garden' },
-    'tower': { title: 'Tower (4–20F)', desc: '65m · Research · M+ Lounge · Lingnan U · HSUHK' },
-    'facade': { title: 'LED Facade', desc: '65.8m × 110m · 140,000 ceramic tiles · Art screen' },
-    'trusses': { title: 'Mega-Trusses', desc: '5 structural trusses spanning MTR tunnel (Arup)' },
+    'found-space': { title: '1. Found Space + 2. The Studio', desc: 'B1/F · Underground exhibition following MTR tunnel · Large installations' },
+    'podium': { title: '3–5. Podium (Main Hall · Atrium · Galleries)', desc: 'G–2F · 33 galleries · 17,000 m² · Cinema ×3 · Mediatheque · Learning Hub' },
+    'tower': { title: '6–11. Tower', desc: 'L6 Terrace Restaurant · L7 Research Centre · L8 Office ×4\nL9 M+ Members Lounge · L10 Art-related OACF · L11 RDE (F&B) ×3' },
+    'facade': { title: 'M+ Facade (LED Screen)', desc: '65.8m × 110m · Ceramic louvres with embedded LEDs\nScreens commissioned moving image works facing harbour' },
+    'roof-garden': { title: '12. Roof Garden', desc: 'Atop podium, both sides of tower · Faces Victoria Harbour' },
+    'csf': { title: '13–14. CSF Building', desc: 'Conservation & Storage Facility\n13: Art Storage · 14: Conservation Labs' },
+    'tunnel': { title: '20–21. Underground Infrastructure', desc: '20: Airport Express Line Tunnel (1.5m below ground)\n21: MTR / Elements Cooling Main' },
+    'harbour': { title: '19. Victoria Harbour', desc: 'M+ Facade LED artworks visible from harbour & HK Island' },
+    'promenade': { title: '18. Waterfront Promenade', desc: 'Public waterfront · Viewing point for M+ Facade' },
+    'trusses': { title: 'Mega-Trusses (Arup)', desc: '5 structural trusses spanning above railway tunnels\nPrevents building loading MTR infrastructure' },
+    'access': { title: '15–17. Access', desc: '15: Avenue · 16: Carriageway · 17: Parking' },
   };
 
   // Hover tooltips
@@ -48,27 +55,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const blueprintSection = document.querySelector('.blueprint-section');
   const svgStrokes = document.querySelectorAll('.bp-stroke');
   
-  // Set initial stroke-dasharray for draw animation
   svgStrokes.forEach(stroke => {
-    const length = stroke.getTotalLength ? stroke.getTotalLength() : 1000;
-    stroke.style.strokeDasharray = length;
-    stroke.style.strokeDashoffset = length;
-    stroke.style.transition = 'stroke-dashoffset 2s ease-out';
+    try {
+      const length = stroke.getTotalLength();
+      stroke.style.strokeDasharray = length;
+      stroke.style.strokeDashoffset = length;
+      stroke.style.transition = 'stroke-dashoffset 2s ease-out';
+    } catch(e) {
+      // rect elements don't have getTotalLength in all browsers
+      stroke.style.opacity = '0';
+      stroke.style.transition = 'opacity 1.5s ease-out';
+    }
   });
 
   const blueprintObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        // Trigger draw animation
         svgStrokes.forEach((stroke, i) => {
           setTimeout(() => {
             stroke.style.strokeDashoffset = '0';
-          }, i * 300);
+            stroke.style.opacity = '';
+          }, i * 200);
         });
         blueprintObserver.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.3 });
+  }, { threshold: 0.2 });
 
   blueprintObserver.observe(blueprintSection);
 
@@ -87,10 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, { threshold: 0.2 });
 
-  // Pause animations initially
-  specRows.forEach(row => {
-    row.style.animationPlayState = 'paused';
-  });
-
+  specRows.forEach(row => { row.style.animationPlayState = 'paused'; });
   specsObserver.observe(specsSection);
 });

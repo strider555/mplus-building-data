@@ -1,275 +1,353 @@
 /**
- * M+ Building — Three.js 3D Wireframe Viewer
- * Blueprint-style 3D model (procedural geometry since b3dm parsing is complex)
+ * M+ Building — Three.js 3D Wireframe Viewer (v2 - Accurate)
+ * Based on Herzog & de Meuron Section B drawing (415_DR_2110_002)
+ * 
+ * HdM Cross Section Legend:
+ * 1. Found Space  2. The Studio  3. Main Hall  4. Atrium
+ * 5. Galleries  6. Terrace Restaurant  7. Research Centre
+ * 8. Office  9. M+ Members Lounge  10. Art-related OACF
+ * 11. RDE (F&B)  12. Roof Garden  13. CSF Art Storage
+ * 14. CSF Conservation Labs  15. Avenue  16. Carriageway
+ * 17. Parking  18. Waterfront Promenade  19. Victoria Harbour
+ * 20. Airport Express Line Tunnel  21. MTR / Elements Cooling Main
  */
 
 (function() {
   const canvas = document.getElementById('three-canvas');
   if (!canvas) return;
 
-  // Scene setup
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0c0c0c);
-  scene.fog = new THREE.Fog(0x0c0c0c, 80, 200);
+  scene.fog = new THREE.Fog(0x0c0c0c, 120, 300);
 
-  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(50, 30, 60);
-  camera.lookAt(0, 10, 0);
+  const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(80, 40, 80);
+  camera.lookAt(0, 15, 0);
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight - 52);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   // Materials
-  const wireMat = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.4, transparent: true });
+  const wireMat = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.35, transparent: true });
   const wireMatBright = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.7, transparent: true });
+  const wireMatDim = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.15, transparent: true });
   const accentMat = new THREE.LineBasicMaterial({ color: 0xe8c547, opacity: 0.6, transparent: true });
-  const fillMat = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.03, transparent: true, side: THREE.DoubleSide });
-  const fillMatHover = new THREE.MeshBasicMaterial({ color: 0xe8c547, opacity: 0.08, transparent: true, side: THREE.DoubleSide });
+  const fillMat = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.02, transparent: true, side: THREE.DoubleSide });
+  const groundFill = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.01, transparent: true, side: THREE.DoubleSide });
 
-  // Building group
   const building = new THREE.Group();
 
-  // --- Podium (main body) ---
-  const podiumGeo = new THREE.BoxGeometry(60, 12, 35);
+  // === PROPORTIONS (based on HdM section) ===
+  // Podium: wide (~160m) x ~15m tall x ~80m deep
+  // Tower: narrow (~30m) x ~50m tall x ~18m deep (very slender)
+  // Scale: 1 unit = ~2m
+  const podW = 80, podH = 7.5, podD = 40;
+  const towW = 15, towH = 45, towD = 9;
+  const towOffsetX = 0; // centered per section drawing
+
+  // === UNDERGROUND: Found Space + Studio + Tunnel ===
+  // Found Space - irregular organic shape (from axonometry)
+  const foundShape = new THREE.Shape();
+  foundShape.moveTo(-30, -20);
+  foundShape.bezierCurveTo(-35, -10, -20, 5, -10, 15);
+  foundShape.lineTo(10, 18);
+  foundShape.bezierCurveTo(20, 15, 30, 5, 25, -10);
+  foundShape.lineTo(20, -18);
+  foundShape.bezierCurveTo(10, -22, -15, -22, -30, -20);
+  
+  const foundExtrudeSettings = { depth: 8, bevelEnabled: false };
+  const foundGeo = new THREE.ExtrudeGeometry(foundShape, foundExtrudeSettings);
+  const foundEdges = new THREE.EdgesGeometry(foundGeo);
+  const foundWire = new THREE.LineSegments(foundEdges, wireMat);
+  foundWire.rotation.x = -Math.PI / 2;
+  foundWire.position.set(0, -6, 0);
+  foundWire.scale.set(0.6, 0.6, 0.6);
+  foundWire.userData = { name: 'Found Space', desc: 'B1/F · Underground exhibition hall\nOrganic form following MTR tunnel contours\nLarge-scale installations & The Studio' };
+  building.add(foundWire);
+
+  // Airport Express Tunnel (cylindrical, underground)
+  const tunnelGeo = new THREE.CylinderGeometry(3, 3, 70, 12, 1, true);
+  const tunnelEdges = new THREE.EdgesGeometry(tunnelGeo);
+  const tunnelWire = new THREE.LineSegments(tunnelEdges, wireMatDim);
+  tunnelWire.rotation.z = Math.PI / 2;
+  tunnelWire.position.set(0, -12, 0);
+  tunnelWire.userData = { name: 'Airport Express Line Tunnel', desc: 'MTR tunnel running just 1.5m below ground\n5 mega-trusses span above to protect it' };
+  building.add(tunnelWire);
+
+  // === PODIUM (Ground to Roof Garden level) ===
+  // Multi-level podium with cantilever
+  const podiumGeo = new THREE.BoxGeometry(podW, podH, podD);
   const podiumEdges = new THREE.EdgesGeometry(podiumGeo);
   const podiumWire = new THREE.LineSegments(podiumEdges, wireMatBright);
-  podiumWire.position.set(0, 6, 0);
-  podiumWire.userData = { name: 'Podium', desc: 'G–3F · 33 galleries · 17,000 m² exhibition\nCinema ×3 · Mediatheque · Learning Hub' };
+  podiumWire.position.set(0, podH / 2, 0);
+  podiumWire.userData = { name: 'Podium', desc: 'G–2F · Main Hall · Atrium · 33 Galleries\n17,000 m² exhibition · Cinema ×3\nMediatheque · Learning Hub' };
   building.add(podiumWire);
-
+  
   const podiumFill = new THREE.Mesh(podiumGeo, fillMat);
   podiumFill.position.copy(podiumWire.position);
   building.add(podiumFill);
 
-  // Floor lines in podium
-  for (let i = 1; i <= 3; i++) {
-    const y = i * 3;
-    const floorGeo = new THREE.PlaneGeometry(59, 34);
+  // Podium floor divisions (3 main levels: GF, L1, L2)
+  for (let i = 1; i <= 2; i++) {
+    const y = i * 2.5;
+    const floorGeo = new THREE.PlaneGeometry(podW - 1, podD - 1);
     const floorEdges = new THREE.EdgesGeometry(floorGeo);
-    const floorLine = new THREE.LineSegments(floorEdges, new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.1, transparent: true }));
+    const floorLine = new THREE.LineSegments(floorEdges, wireMatDim);
     floorLine.rotation.x = -Math.PI / 2;
     floorLine.position.set(0, y, 0);
     building.add(floorLine);
   }
 
-  // --- Tower ---
-  const towerGeo = new THREE.BoxGeometry(18, 50, 14);
+  // Cantilever extensions (podium overhangs ground floor)
+  const cantGeo = new THREE.BoxGeometry(6, 0.3, podD);
+  const cantEdges = new THREE.EdgesGeometry(cantGeo);
+  const cantL = new THREE.LineSegments(cantEdges, wireMatDim);
+  cantL.position.set(-podW/2 - 3, 5, 0);
+  building.add(cantL);
+  const cantR = new THREE.LineSegments(cantEdges.clone(), wireMatDim);
+  cantR.position.set(podW/2 + 3, 5, 0);
+  building.add(cantR);
+
+  // === ROOF GARDEN (atop podium, both sides of tower) ===
+  const roofGardenGeo = new THREE.PlaneGeometry(podW, podD);
+  const roofGardenEdges = new THREE.EdgesGeometry(roofGardenGeo);
+  const roofGarden = new THREE.LineSegments(roofGardenEdges, new THREE.LineBasicMaterial({ color: 0x4a9e4a, opacity: 0.25, transparent: true }));
+  roofGarden.rotation.x = -Math.PI / 2;
+  roofGarden.position.set(0, podH + 0.1, 0);
+  roofGarden.userData = { name: 'Roof Garden', desc: 'Level 3 · Faces Victoria Harbour\nOpen-air terrace spanning podium roof' };
+  building.add(roofGarden);
+
+  // === TOWER (very slender, rises from center of podium) ===
+  const towerGeo = new THREE.BoxGeometry(towW, towH, towD);
   const towerEdges = new THREE.EdgesGeometry(towerGeo);
   const towerWire = new THREE.LineSegments(towerEdges, wireMatBright);
-  towerWire.position.set(0, 37, 0);
-  towerWire.userData = { name: 'Tower', desc: '4–20F · 65m height\nResearch Centre · M+ Lounge (L11)\nLingnan U (L13) · HSUHK (L15)' };
+  towerWire.position.set(towOffsetX, podH + towH / 2, 0);
+  towerWire.userData = { name: 'Tower', desc: 'L6–L11 (visible floors)\nL6: Terrace Restaurant\nL7: Research Centre\nL8: Offices (×4 floors)\nL9: M+ Members Lounge\nL10: Art-related OACF\nL11: RDE (F&B) — top floors' };
   building.add(towerWire);
 
   const towerFill = new THREE.Mesh(towerGeo, fillMat);
   towerFill.position.copy(towerWire.position);
   building.add(towerFill);
 
-  // Tower floor lines
-  for (let i = 1; i <= 16; i++) {
-    const y = 12 + i * 3;
-    const fGeo = new THREE.PlaneGeometry(17, 13);
+  // Tower floor lines (11 visible floors based on section)
+  for (let i = 1; i <= 10; i++) {
+    const y = podH + i * (towH / 11);
+    const fGeo = new THREE.PlaneGeometry(towW - 0.5, towD - 0.5);
     const fEdges = new THREE.EdgesGeometry(fGeo);
-    const fLine = new THREE.LineSegments(fEdges, new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.06, transparent: true }));
+    const fLine = new THREE.LineSegments(fEdges, wireMatDim);
     fLine.rotation.x = -Math.PI / 2;
-    fLine.position.set(0, y, 0);
+    fLine.position.set(towOffsetX, y, 0);
     building.add(fLine);
   }
 
-  // --- LED Facade (right side of tower) ---
-  const ledGeo = new THREE.PlaneGeometry(0.5, 48);
-  const ledMat = new THREE.MeshBasicMaterial({ color: 0xe8c547, opacity: 0.15, transparent: true, side: THREE.DoubleSide });
+  // === LED FACADE (south face of tower, facing harbour) ===
+  const ledH = towH - 2;
+  const ledW = towW;
+  const ledGeo = new THREE.PlaneGeometry(ledW, ledH);
+  const ledMat = new THREE.MeshBasicMaterial({ color: 0xe8c547, opacity: 0.12, transparent: true, side: THREE.DoubleSide });
   const ledPlane = new THREE.Mesh(ledGeo, ledMat);
-  ledPlane.position.set(9.2, 37, 0);
-  ledPlane.userData = { name: 'LED Facade', desc: '65.8m × 110m\n140,000 ceramic tiles with embedded LEDs\nFacing Victoria Harbour' };
+  ledPlane.position.set(towOffsetX, podH + towH / 2, towD / 2 + 0.2);
+  ledPlane.userData = { name: 'M+ Facade (LED)', desc: '65.8m high × 110m wide\nEmbedded LED light bars in ceramic louvres\nScreens commissioned moving image artworks\nVisible from harbour promenade & HK Island' };
   building.add(ledPlane);
 
-  // LED edge glow
-  const ledEdgeGeo = new THREE.EdgesGeometry(new THREE.PlaneGeometry(0.5, 48));
+  const ledEdgeGeo = new THREE.EdgesGeometry(new THREE.PlaneGeometry(ledW, ledH));
   const ledEdge = new THREE.LineSegments(ledEdgeGeo, accentMat);
   ledEdge.position.copy(ledPlane.position);
   building.add(ledEdge);
 
-  // --- Found Space (underground) ---
-  const foundShape = new THREE.Shape();
-  foundShape.moveTo(-25, -5);
-  foundShape.quadraticCurveTo(0, -10, 25, -5);
-  foundShape.lineTo(25, 5);
-  foundShape.quadraticCurveTo(0, 8, -25, 5);
-  foundShape.closePath();
+  // Louvre lines on facade
+  for (let i = 0; i < 20; i++) {
+    const ly = podH + 2 + i * (ledH / 20);
+    const lineGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(towOffsetX - ledW/2, ly, towD/2 + 0.3),
+      new THREE.Vector3(towOffsetX + ledW/2, ly, towD/2 + 0.3),
+    ]);
+    building.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0xe8c547, opacity: 0.15, transparent: true })));
+  }
 
-  const foundGeo = new THREE.ExtrudeGeometry(foundShape, { depth: 20, bevelEnabled: false });
-  const foundEdges = new THREE.EdgesGeometry(foundGeo);
-  const foundWire = new THREE.LineSegments(foundEdges, wireMat);
-  foundWire.position.set(0, -8, -10);
-  foundWire.userData = { name: 'Found Space', desc: 'B2 · Underground exhibition hall\nFollows MTR tunnel contours\nLarge-scale installations' };
-  building.add(foundWire);
+  // === CSF BUILDING (Conservation & Storage Facility - to the right) ===
+  const csfW = 12, csfH = 20, csfD = 14;
+  const csfGeo = new THREE.BoxGeometry(csfW, csfH, csfD);
+  const csfEdges = new THREE.EdgesGeometry(csfGeo);
+  const csfWire = new THREE.LineSegments(csfEdges, wireMat);
+  csfWire.position.set(podW/2 + 10, csfH/2, 0);
+  csfWire.userData = { name: 'CSF Building', desc: 'Conservation & Storage Facility\nL13: Art Storage\nL14: Conservation Labs\nConnected to main building' };
+  building.add(csfWire);
 
-  // --- Mega-trusses (simplified) ---
-  const trussMat = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.2, transparent: true });
-  const trussPositions = [-20, -10, 0, 10, 20];
+  // CSF floor lines
+  for (let i = 1; i < 5; i++) {
+    const fy = i * (csfH / 5);
+    const cfGeo = new THREE.PlaneGeometry(csfW - 0.5, csfD - 0.5);
+    const cfEdges = new THREE.EdgesGeometry(cfGeo);
+    const cfLine = new THREE.LineSegments(cfEdges, wireMatDim);
+    cfLine.rotation.x = -Math.PI / 2;
+    cfLine.position.set(podW/2 + 10, fy, 0);
+    building.add(cfLine);
+  }
+
+  // === MEGA-TRUSSES (5, spanning above tunnel) ===
+  const trussPositions = [-28, -14, 0, 14, 28];
   trussPositions.forEach(xPos => {
-    const points = [
-      new THREE.Vector3(xPos, -5, -12),
-      new THREE.Vector3(xPos * 0.6, 0, -12),
-      new THREE.Vector3(xPos, -5, 12),
-      new THREE.Vector3(xPos * 0.6, 0, 12),
+    const pts = [
+      new THREE.Vector3(xPos, -8, -podD/3),
+      new THREE.Vector3(xPos, 0, -podD/3),
     ];
-    const trussGeo = new THREE.BufferGeometry().setFromPoints([points[0], points[1]]);
-    building.add(new THREE.Line(trussGeo, trussMat));
-    const trussGeo2 = new THREE.BufferGeometry().setFromPoints([points[2], points[3]]);
-    building.add(new THREE.Line(trussGeo2, trussMat));
+    const pts2 = [
+      new THREE.Vector3(xPos, -8, podD/3),
+      new THREE.Vector3(xPos, 0, podD/3),
+    ];
+    const tGeo1 = new THREE.BufferGeometry().setFromPoints(pts);
+    const tGeo2 = new THREE.BufferGeometry().setFromPoints(pts2);
+    const trussMat = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.18, transparent: true });
+    building.add(new THREE.Line(tGeo1, trussMat));
+    building.add(new THREE.Line(tGeo2, trussMat));
+    // Cross brace
+    const cross = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(xPos, -8, -podD/3),
+      new THREE.Vector3(xPos, 0, podD/3),
+    ]);
+    building.add(new THREE.Line(cross, new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.08, transparent: true })));
   });
 
-  // --- Ground Plane ---
-  const groundGeo = new THREE.PlaneGeometry(200, 200);
+  // === GROUND + WATERFRONT ===
+  // Ground plane
+  const groundGeo = new THREE.PlaneGeometry(250, 250);
   const groundEdges = new THREE.EdgesGeometry(groundGeo);
-  const ground = new THREE.LineSegments(groundEdges, new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.05, transparent: true }));
+  const ground = new THREE.LineSegments(groundEdges, new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.04, transparent: true }));
   ground.rotation.x = -Math.PI / 2;
-  ground.position.y = 0;
   scene.add(ground);
 
-  // Grid on ground
-  const gridHelper = new THREE.GridHelper(200, 40, 0x222222, 0x151515);
+  // Grid
+  const gridHelper = new THREE.GridHelper(250, 50, 0x1a1a1a, 0x111111);
   scene.add(gridHelper);
 
-  // Add building to scene
+  // Waterfront promenade (south side)
+  const proGeo = new THREE.PlaneGeometry(100, 8);
+  const proEdges = new THREE.EdgesGeometry(proGeo);
+  const promenade = new THREE.LineSegments(proEdges, new THREE.LineBasicMaterial({ color: 0x4a9eff, opacity: 0.15, transparent: true }));
+  promenade.rotation.x = -Math.PI / 2;
+  promenade.position.set(0, 0.05, podD/2 + 10);
+  promenade.userData = { name: 'Waterfront Promenade', desc: 'Public waterfront facing Victoria Harbour\nViewing point for M+ Facade LED art' };
+  building.add(promenade);
+
+  // Victoria Harbour indicator
+  const harbourGeo = new THREE.PlaneGeometry(120, 40);
+  const harbourMat = new THREE.MeshBasicMaterial({ color: 0x4a9eff, opacity: 0.03, transparent: true, side: THREE.DoubleSide });
+  const harbour = new THREE.Mesh(harbourGeo, harbourMat);
+  harbour.rotation.x = -Math.PI / 2;
+  harbour.position.set(0, -0.1, podD/2 + 30);
+  building.add(harbour);
+
   scene.add(building);
 
-  // --- Orbit Controls (manual) ---
+  // === ORBIT CONTROLS ===
   let isDragging = false;
   let previousMouse = { x: 0, y: 0 };
-  let spherical = { radius: 90, theta: Math.PI / 4, phi: Math.PI / 3 };
+  let spherical = { radius: 110, theta: Math.PI / 5, phi: Math.PI / 3.2 };
 
   function updateCamera() {
     camera.position.x = spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta);
     camera.position.y = spherical.radius * Math.cos(spherical.phi);
     camera.position.z = spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta);
-    camera.lookAt(0, 15, 0);
+    camera.lookAt(0, 12, 0);
   }
 
-  canvas.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    previousMouse = { x: e.clientX, y: e.clientY };
-  });
-
+  canvas.addEventListener('mousedown', (e) => { isDragging = true; autoRotate = false; previousMouse = { x: e.clientX, y: e.clientY }; });
   canvas.addEventListener('mousemove', (e) => {
     if (!isDragging) return;
-    const dx = e.clientX - previousMouse.x;
-    const dy = e.clientY - previousMouse.y;
-    spherical.theta -= dx * 0.005;
-    spherical.phi = Math.max(0.3, Math.min(Math.PI - 0.3, spherical.phi + dy * 0.005));
+    spherical.theta -= (e.clientX - previousMouse.x) * 0.005;
+    spherical.phi = Math.max(0.2, Math.min(Math.PI - 0.2, spherical.phi + (e.clientY - previousMouse.y) * 0.005));
     previousMouse = { x: e.clientX, y: e.clientY };
     updateCamera();
   });
-
   canvas.addEventListener('mouseup', () => { isDragging = false; });
   canvas.addEventListener('mouseleave', () => { isDragging = false; });
-
   canvas.addEventListener('wheel', (e) => {
-    spherical.radius = Math.max(30, Math.min(200, spherical.radius + e.deltaY * 0.05));
+    spherical.radius = Math.max(40, Math.min(250, spherical.radius + e.deltaY * 0.05));
     updateCamera();
   }, { passive: true });
 
-  // Touch support
-  canvas.addEventListener('touchstart', (e) => {
-    isDragging = true;
-    previousMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  });
+  // Touch
+  canvas.addEventListener('touchstart', (e) => { isDragging = true; autoRotate = false; previousMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY }; });
   canvas.addEventListener('touchmove', (e) => {
     if (!isDragging) return;
-    const dx = e.touches[0].clientX - previousMouse.x;
-    const dy = e.touches[0].clientY - previousMouse.y;
-    spherical.theta -= dx * 0.005;
-    spherical.phi = Math.max(0.3, Math.min(Math.PI - 0.3, spherical.phi + dy * 0.005));
+    spherical.theta -= (e.touches[0].clientX - previousMouse.x) * 0.005;
+    spherical.phi = Math.max(0.2, Math.min(Math.PI - 0.2, spherical.phi + (e.touches[0].clientY - previousMouse.y) * 0.005));
     previousMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
     updateCamera();
     e.preventDefault();
   }, { passive: false });
   canvas.addEventListener('touchend', () => { isDragging = false; });
 
-  // --- Click to select ---
+  // === CLICK TO SELECT ===
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();
   const infoPanel = document.getElementById('info-panel');
   const infoTitle = document.getElementById('info-title');
   const infoDesc = document.getElementById('info-desc');
-  const closePanel = document.getElementById('close-panel');
+  document.getElementById('close-panel').addEventListener('click', () => { infoPanel.classList.remove('active'); });
 
   canvas.addEventListener('click', (e) => {
     const rect = canvas.getBoundingClientRect();
     mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(building.children, false);
-    
     if (intersects.length > 0) {
-      const obj = intersects[0].object;
-      // Find parent with userData
-      let target = obj;
-      if (!target.userData.name) {
-        // Check siblings
-        target = building.children.find(c => c.userData.name && c.position.distanceTo(obj.position) < 1) || obj;
-      }
-      
-      if (target.userData.name) {
-        infoTitle.textContent = target.userData.name;
-        infoDesc.textContent = target.userData.desc;
-        infoPanel.classList.add('active');
+      // Find object with userData
+      for (const hit of intersects) {
+        let target = hit.object;
+        if (target.userData && target.userData.name) {
+          infoTitle.textContent = target.userData.name;
+          infoDesc.textContent = target.userData.desc;
+          infoPanel.classList.add('active');
+          break;
+        }
+        // Check nearby objects
+        const nearby = building.children.find(c => c.userData && c.userData.name && c.position.distanceTo(target.position) < 2);
+        if (nearby) {
+          infoTitle.textContent = nearby.userData.name;
+          infoDesc.textContent = nearby.userData.desc;
+          infoPanel.classList.add('active');
+          break;
+        }
       }
     }
   });
 
-  closePanel.addEventListener('click', () => {
-    infoPanel.classList.remove('active');
-  });
-
-  // --- Auto-rotation ---
+  // === AUTO ROTATE ===
   let autoRotate = true;
+  setTimeout(() => { autoRotate = false; }, 20000);
 
-  canvas.addEventListener('mousedown', () => { autoRotate = false; });
-  setTimeout(() => { autoRotate = false; }, 15000); // Stop after 15s
-
-  // --- LED pulse ---
+  // === LED PULSE ===
   let ledTime = 0;
 
-  // --- Animation loop ---
+  // === ANIMATE ===
   function animate() {
     requestAnimationFrame(animate);
-    
-    if (autoRotate) {
-      spherical.theta += 0.002;
-      updateCamera();
-    }
-    
-    // LED pulse
+    if (autoRotate) { spherical.theta += 0.0015; updateCamera(); }
     ledTime += 0.02;
-    ledMat.opacity = 0.1 + Math.sin(ledTime) * 0.08;
-    
+    ledMat.opacity = 0.08 + Math.sin(ledTime) * 0.06;
     renderer.render(scene, camera);
   }
 
-  // --- Resize ---
   window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / (window.innerHeight - 52);
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight - 52);
   });
 
-  // --- Day/Night toggle ---
+  // Day/Night
   const modeToggle = document.getElementById('mode-toggle');
   modeToggle.addEventListener('click', () => {
     document.body.classList.toggle('day-mode');
     const isDay = document.body.classList.contains('day-mode');
     modeToggle.querySelector('.mode-icon').textContent = isDay ? '☀' : '☾';
     scene.background = new THREE.Color(isDay ? 0xf5f3ef : 0x0c0c0c);
-    scene.fog = new THREE.Fog(isDay ? 0xf5f3ef : 0x0c0c0c, 80, 200);
-    wireMat.color.set(isDay ? 0x333333 : 0xffffff);
-    wireMatBright.color.set(isDay ? 0x1a1a1a : 0xffffff);
+    scene.fog = new THREE.Fog(isDay ? 0xf5f3ef : 0x0c0c0c, 120, 300);
   });
 
-  // Init
   updateCamera();
   animate();
 })();
