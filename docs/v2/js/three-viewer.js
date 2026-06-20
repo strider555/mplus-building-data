@@ -1,20 +1,17 @@
 /**
- * M+ Building — Three.js 3D Wireframe Model (v3 - Correct from HdM Section B)
+ * M+ Building — Three.js 3D Model (v4 - Correct axonometry proportions)
  * 
- * From the CROSS SECTION (415_DR_2110_002):
- * - Tower is NARROW and CENTERED on the wide podium (~1:6 ratio)
- * - Podium is wide (~160m) and 2-3 stories
- * - Tower rises from center with ~14 floors (L6-L11)
- * - CSF Building is separate structure on the right
- * - Found Space + Studio underground (irregular)
- * - Roof Garden extends both sides of tower at podium roof level
- * - Tower has louvre facade on harbour side
+ * From the HdM exploded axonometry:
+ * - Level -1: Organic irregular footprint (Found Space), LARGER than floors above
+ * - Level 0: Rectangular floor plate (~1.3:1 width:depth ratio)  
+ * - Level +1: Similar to Level 0
+ * - Tower: Wide FLAT SLAB (same width as podium) + narrower structure above
+ *   - The "dark block" in axonometry = tower main volume (facade side)
+ *   - Narrower louvre structure above = upper tower
+ *   - Small cap on top = plant room
  * 
- * From the PINK SECTION:
- * - Tower ~14 floors, very slender
- * - Podium ~3 levels, wide horizontal mass
- * - Open ground floor (pilotis)
- * - Underground spaces visible
+ * KEY INSIGHT: Tower appears narrow in SECTION because section cuts through
+ * its SHALLOW dimension (~20m deep). But it's WIDE (~110m) facing harbour.
  * 
  * Scale: 1 unit ≈ 1m
  */
@@ -25,7 +22,7 @@
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0c0c0c);
-  scene.fog = new THREE.Fog(0x0c0c0c, 150, 350);
+  scene.fog = new THREE.Fog(0x0c0c0c, 180, 400);
 
   const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -33,65 +30,121 @@
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   // Materials
-  const wireBright = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.6, transparent: true });
-  const wireMed = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.35, transparent: true });
-  const wireDim = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.15, transparent: true });
-  const wireVDim = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.07, transparent: true });
-  const accentMat = new THREE.LineBasicMaterial({ color: 0xe8c547, opacity: 0.5, transparent: true });
-  const accentDim = new THREE.LineBasicMaterial({ color: 0xe8c547, opacity: 0.12, transparent: true });
-  const fillDark = new THREE.MeshBasicMaterial({ color: 0x1a1a1a, opacity: 0.2, transparent: true, side: THREE.DoubleSide });
-  const fillLight = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.015, transparent: true, side: THREE.DoubleSide });
+  const wireBright = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.55, transparent: true });
+  const wireMed = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.3, transparent: true });
+  const wireDim = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.12, transparent: true });
+  const wireVDim = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.06, transparent: true });
+  const accentDim = new THREE.LineBasicMaterial({ color: 0xe8c547, opacity: 0.1, transparent: true });
+  const accentMed = new THREE.LineBasicMaterial({ color: 0xe8c547, opacity: 0.4, transparent: true });
+  const fillDark = new THREE.MeshBasicMaterial({ color: 0x111111, opacity: 0.25, transparent: true, side: THREE.DoubleSide });
+  const fillTower = new THREE.MeshBasicMaterial({ color: 0x0a0a0a, opacity: 0.35, transparent: true, side: THREE.DoubleSide });
 
   const building = new THREE.Group();
 
   // ============================================================
-  // DIMENSIONS (from section drawing proportions)
+  // PROPORTIONS (from axonometry measurement)
+  // Podium floors: ~160m wide × ~110m deep
+  // Tower facade slab: ~110m wide × ~20m deep × ~35m tall
+  // Upper tower: ~35m wide × ~18m deep × ~20m tall
   // ============================================================
-  const podW = 130; // podium width (~160m, scaled)
-  const podH = 14;  // podium height (2-3 stories)
-  const podD = 70;  // podium depth
+  
+  // Podium
+  const podW = 120;  // width (E-W, along harbour)
+  const podD = 85;   // depth (N-S)
+  const podH = 14;   // height (GF + L1 + L2)
+  const pilH = 5;    // pilotis height
 
-  const towW = 22;  // tower width (NARROW, ~1/6 of podium)
-  const towD = 18;  // tower depth
-  const towH = 52;  // tower height (14 floors × ~3.7m)
+  // Tower (wide flat slab)
+  const towW = 110;  // same as podium width roughly
+  const towD = 20;   // SHALLOW depth
+  const towH = 35;   // main facade slab height
 
-  const pilotisH = 5; // open ground floor
+  // Upper tower (narrower, above facade slab)
+  const upW = 32;
+  const upD = 18;
+  const upH = 18;
 
   // ============================================================
-  // 1. PILOTIS / OPEN GROUND FLOOR
+  // LEVEL -1: FOUND SPACE (organic, larger than above)
   // ============================================================
-  // Concrete columns
-  for (let x = -55; x <= 55; x += 18) {
-    for (let z = -28; z <= 28; z += 14) {
-      const colGeo = new THREE.BoxGeometry(1.5, pilotisH, 1.5);
+  const foundShape = new THREE.Shape();
+  // Triangular organic form from axonometry
+  foundShape.moveTo(-60, -40);
+  foundShape.bezierCurveTo(-65, -15, -55, 20, -35, 40);
+  foundShape.lineTo(0, 48);
+  foundShape.bezierCurveTo(25, 45, 50, 35, 60, 15);
+  foundShape.lineTo(55, -10);
+  foundShape.bezierCurveTo(50, -30, 35, -42, 15, -45);
+  foundShape.lineTo(-20, -45);
+  foundShape.bezierCurveTo(-40, -44, -55, -42, -60, -40);
+
+  const foundGeo = new THREE.ExtrudeGeometry(foundShape, { depth: 6, bevelEnabled: false });
+  const foundEdges = new THREE.EdgesGeometry(foundGeo);
+  const foundWire = new THREE.LineSegments(foundEdges, wireMed);
+  foundWire.rotation.x = -Math.PI / 2;
+  foundWire.position.set(0, -5, 0);
+  foundWire.userData = { name: 'Level -1 · Found Space', desc: 'Underground · Organic irregular footprint\n1. Found Space · 2. The Studio\nLarger than building above\nFollows MTR tunnel contours' };
+  building.add(foundWire);
+
+  // Shaft dropping below found space
+  const shaftGeo = new THREE.BoxGeometry(4, 12, 4);
+  const shaftEdges = new THREE.EdgesGeometry(shaftGeo);
+  const shaft = new THREE.LineSegments(shaftEdges, wireDim);
+  shaft.position.set(10, -14, -20);
+  building.add(shaft);
+
+  // Ramp/wedge element (the triangular thing extending from Level -1 in axonometry)
+  const wedgeShape = new THREE.Shape();
+  wedgeShape.moveTo(-55, -10);
+  wedgeShape.lineTo(-75, 5);
+  wedgeShape.lineTo(-75, 15);
+  wedgeShape.lineTo(-55, 10);
+  wedgeShape.lineTo(-55, -10);
+  const wedgeGeo = new THREE.ExtrudeGeometry(wedgeShape, { depth: 3, bevelEnabled: false });
+  const wedgeEdges = new THREE.EdgesGeometry(wedgeGeo);
+  const wedge = new THREE.LineSegments(wedgeEdges, wireDim);
+  wedge.rotation.x = -Math.PI / 2;
+  wedge.position.set(0, -3, 0);
+  building.add(wedge);
+
+  // ============================================================
+  // PILOTIS (open ground floor with columns)
+  // ============================================================
+  for (let x = -50; x <= 50; x += 20) {
+    for (let z = -35; z <= 35; z += 18) {
+      const colGeo = new THREE.BoxGeometry(1.5, pilH, 1.5);
       const colEdges = new THREE.EdgesGeometry(colGeo);
       const col = new THREE.LineSegments(colEdges, wireDim);
-      col.position.set(x, pilotisH / 2, z);
+      col.position.set(x, pilH / 2, z);
       building.add(col);
     }
   }
 
-  // Ground level slab
-  const slabGeo = new THREE.BoxGeometry(podW + 4, 0.4, podD + 4);
-  const slabEdges = new THREE.EdgesGeometry(slabGeo);
-  const slab = new THREE.LineSegments(slabEdges, wireDim);
-  slab.position.set(0, pilotisH, 0);
-  building.add(slab);
+  // ============================================================
+  // LEVEL 0 (Ground Floor plate)
+  // ============================================================
+  const l0Geo = new THREE.BoxGeometry(podW, 0.5, podD);
+  const l0Edges = new THREE.EdgesGeometry(l0Geo);
+  const l0 = new THREE.LineSegments(l0Edges, wireMed);
+  l0.position.set(0, pilH, 0);
+  building.add(l0);
 
   // ============================================================
-  // 2. PODIUM (wide, thick block, louvre-clad)
+  // PODIUM BLOCK (Levels 0 to +2)
   // ============================================================
+  const podBase = pilH;
+
   const podGeo = new THREE.BoxGeometry(podW, podH, podD);
   const podEdges = new THREE.EdgesGeometry(podGeo);
   const podWire = new THREE.LineSegments(podEdges, wireBright);
-  podWire.position.set(0, pilotisH + podH / 2, 0);
-  podWire.userData = { name: 'Podium', desc: 'G–L2 · Wide horizontal mass\n5. Galleries (both sides) · 4. Atrium (center)\n3. Main Hall · Cinema ×3 · Mediatheque\n17,000 m² exhibition space' };
+  podWire.position.set(0, podBase + podH/2, 0);
+  podWire.userData = { name: 'Podium (Levels 0–+1)', desc: 'Wide horizontal mass\n3. Main Hall · 4. Atrium · 5. Galleries\nCinema ×3 · Mediatheque · Learning Hub\n17,000 m² exhibition space' };
   building.add(podWire);
-  building.add(new THREE.Mesh(podGeo, fillDark).translateX(0).translateY(pilotisH + podH/2).translateZ(0));
+  building.add(new THREE.Mesh(podGeo, fillDark).translateY(podBase + podH/2));
 
-  // Podium internal floor lines (3 levels: GF, L1, L2)
+  // Internal floors
   for (let i = 1; i <= 2; i++) {
-    const y = pilotisH + i * (podH / 3);
+    const y = podBase + i * (podH / 3);
     const fGeo = new THREE.PlaneGeometry(podW - 4, podD - 4);
     const fEdges = new THREE.EdgesGeometry(fGeo);
     const fl = new THREE.LineSegments(fEdges, wireVDim);
@@ -100,248 +153,239 @@
     building.add(fl);
   }
 
-  // Podium louvres (horizontal lines on all 4 faces)
-  const podTop = pilotisH + podH;
-  const podBot = pilotisH;
-  const louvreSpacing = 0.6;
-  const numLouvres = Math.floor(podH / louvreSpacing);
-  
-  for (let i = 0; i < numLouvres; i++) {
-    const y = podBot + 0.5 + i * louvreSpacing;
-    // Front (harbour side)
+  // Podium louvres (all faces, dense horizontal lines)
+  for (let i = 0; i < 22; i++) {
+    const y = podBase + 0.5 + i * (podH / 22);
+    // Front
     building.add(new THREE.Line(
       new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(-podW/2, y, podD/2 + 0.3),
-        new THREE.Vector3(podW/2, y, podD/2 + 0.3)
+        new THREE.Vector3(-podW/2, y, podD/2 + 0.2),
+        new THREE.Vector3(podW/2, y, podD/2 + 0.2)
       ]), wireDim));
-    // Back
-    if (i % 2 === 0) building.add(new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(-podW/2, y, -podD/2 - 0.3),
-        new THREE.Vector3(podW/2, y, -podD/2 - 0.3)
-      ]), wireVDim));
-    // Sides
+    // Sides (every other)
     if (i % 2 === 0) {
       building.add(new THREE.Line(
         new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(-podW/2 - 0.3, y, -podD/2),
-          new THREE.Vector3(-podW/2 - 0.3, y, podD/2)
+          new THREE.Vector3(-podW/2 - 0.2, y, -podD/2),
+          new THREE.Vector3(-podW/2 - 0.2, y, podD/2)
         ]), wireVDim));
       building.add(new THREE.Line(
         new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(podW/2 + 0.3, y, -podD/2),
-          new THREE.Vector3(podW/2 + 0.3, y, podD/2)
+          new THREE.Vector3(podW/2 + 0.2, y, -podD/2),
+          new THREE.Vector3(podW/2 + 0.2, y, podD/2)
         ]), wireVDim));
     }
   }
 
   // ============================================================
-  // 3. TOWER (narrow, centered, ~14 floors)
+  // ROOF GARDEN LEVEL (podium top, both sides of tower)
   // ============================================================
-  const towBase = podTop; // tower sits on podium roof
+  const roofY = podBase + podH;
+  const rgMat = new THREE.LineBasicMaterial({ color: 0x5a9e5a, opacity: 0.15, transparent: true });
 
-  const towGeo = new THREE.BoxGeometry(towW, towH, towD);
-  const towEdges = new THREE.EdgesGeometry(towGeo);
-  const towWire = new THREE.LineSegments(towEdges, wireBright);
-  towWire.position.set(0, towBase + towH / 2, 0);
-  towWire.userData = { name: 'Tower', desc: 'NARROW slender tower, centered on podium\nL6: Terrace Restaurant\nL7: Research Centre\nL8: Office (×4 floors)\nL9: M+ Members Lounge\nL10: Art-related OACF (×2)\nL11: RDE F&B (×3 top floors)' };
-  building.add(towWire);
-  building.add(new THREE.Mesh(towGeo, fillDark).translateX(0).translateY(towBase + towH/2).translateZ(0));
+  // Left garden
+  const rgLGeo = new THREE.PlaneGeometry((podW - towW)/2 - 2, podD - 4);
+  const rgLEdges = new THREE.EdgesGeometry(rgLGeo);
+  const rgL = new THREE.LineSegments(rgLEdges, rgMat);
+  rgL.rotation.x = -Math.PI / 2;
+  rgL.position.set(-(towW/2 + (podW-towW)/4), roofY + 0.1, 0);
+  building.add(rgL);
 
-  // Tower floor lines (14 floors)
-  const floorH = towH / 14;
-  for (let i = 1; i < 14; i++) {
-    const y = towBase + i * floorH;
-    const fGeo = new THREE.PlaneGeometry(towW - 1, towD - 1);
+  // Right garden
+  const rgR = new THREE.LineSegments(new THREE.EdgesGeometry(rgLGeo), rgMat);
+  rgR.rotation.x = -Math.PI / 2;
+  rgR.position.set((towW/2 + (podW-towW)/4), roofY + 0.1, 0);
+  rgR.userData = { name: 'Roof Garden (12)', desc: 'Both sides of tower on podium roof\nFaces Victoria Harbour' };
+  building.add(rgR);
+
+  // ============================================================
+  // TOWER: WIDE FLAT SLAB (the dark block in axonometry)
+  // ============================================================
+  const towBase = roofY;
+
+  // Main facade volume
+  const tGeo = new THREE.BoxGeometry(towW, towH, towD);
+  const tEdges = new THREE.EdgesGeometry(tGeo);
+  const tWire = new THREE.LineSegments(tEdges, wireBright);
+  tWire.position.set(0, towBase + towH/2, (podD/2 - towD/2) - 5); // toward harbour
+  tWire.userData = { name: 'Tower (Facade Slab)', desc: 'Wide flat slab · ~110m × 20m × 35m\nContains L3–L8 floors\nFacade with LED louvres faces harbour\nAppears narrow in section (shallow depth)' };
+  building.add(tWire);
+  
+  const tFill = new THREE.Mesh(tGeo, fillTower);
+  tFill.position.copy(tWire.position);
+  building.add(tFill);
+
+  // Tower floor lines
+  const towCenterZ = (podD/2 - towD/2) - 5;
+  for (let i = 1; i < 10; i++) {
+    const y = towBase + i * (towH / 10);
+    const fGeo = new THREE.PlaneGeometry(towW - 2, towD - 2);
     const fEdges = new THREE.EdgesGeometry(fGeo);
     const fl = new THREE.LineSegments(fEdges, wireVDim);
     fl.rotation.x = -Math.PI / 2;
-    fl.position.set(0, y, 0);
+    fl.position.set(0, y, towCenterZ);
     building.add(fl);
   }
 
-  // Tower louvres (harbour face = LED facade in gold, other faces in white)
-  const towFrontZ = towD / 2 + 0.3;
-  for (let i = 0; i < 45; i++) {
-    const y = towBase + 1 + i * (towH / 45);
-    // Front (LED facade — gold)
+  // Tower LOUVRES (dense horizontal lines = the facade character)
+  const towFrontZ = towCenterZ + towD/2 + 0.3;
+  for (let i = 0; i < 50; i++) {
+    const y = towBase + 0.5 + i * (towH / 50);
+    // Front face (LED louvres - gold/accent)
     building.add(new THREE.Line(
       new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3(-towW/2, y, towFrontZ),
         new THREE.Vector3(towW/2, y, towFrontZ)
       ]), accentDim));
-    // Sides (white, dim)
-    if (i % 2 === 0) {
+    // Sides (every 3rd)
+    if (i % 3 === 0) {
       building.add(new THREE.Line(
         new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(-towW/2 - 0.3, y, -towD/2),
-          new THREE.Vector3(-towW/2 - 0.3, y, towD/2)
+          new THREE.Vector3(-towW/2 - 0.2, y, towCenterZ - towD/2),
+          new THREE.Vector3(-towW/2 - 0.2, y, towCenterZ + towD/2)
         ]), wireVDim));
       building.add(new THREE.Line(
         new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(towW/2 + 0.3, y, -towD/2),
-          new THREE.Vector3(towW/2 + 0.3, y, towD/2)
+          new THREE.Vector3(towW/2 + 0.2, y, towCenterZ - towD/2),
+          new THREE.Vector3(towW/2 + 0.2, y, towCenterZ + towD/2)
         ]), wireVDim));
     }
-    // Back
-    if (i % 3 === 0) building.add(new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(-towW/2, y, -towD/2 - 0.3),
-        new THREE.Vector3(towW/2, y, -towD/2 - 0.3)
-      ]), wireVDim));
   }
 
-  // Tower facade LED panel (front face glow)
-  const ledGeo = new THREE.PlaneGeometry(towW, towH - 2);
-  const ledMat = new THREE.MeshBasicMaterial({ color: 0xe8c547, opacity: 0.04, transparent: true, side: THREE.DoubleSide });
+  // LED facade glow
+  const ledGeo = new THREE.PlaneGeometry(towW, towH);
+  const ledMat = new THREE.MeshBasicMaterial({ color: 0xe8c547, opacity: 0.035, transparent: true, side: THREE.DoubleSide });
   const ledPlane = new THREE.Mesh(ledGeo, ledMat);
-  ledPlane.position.set(0, towBase + towH/2, towFrontZ + 0.2);
-  ledPlane.userData = { name: 'M+ Facade (LED)', desc: 'Harbour-facing facade\nCeramic louvres with embedded LED bars\nScreens commissioned moving image art\nVisible from Victoria Harbour & HK Island' };
+  ledPlane.position.set(0, towBase + towH/2, towFrontZ + 0.1);
+  ledPlane.userData = { name: 'M+ Facade (LED)', desc: '65.8m × 110m\nCeramic louvres with embedded LED bars\nCommissioned moving image artworks\nVisible from harbour & HK Island' };
   building.add(ledPlane);
 
-  // LED facade edge
+  // Facade edge
   building.add(new THREE.LineSegments(
-    new THREE.EdgesGeometry(new THREE.PlaneGeometry(towW, towH - 2)),
-    accentMat
-  ).translateX(0).translateY(towBase + towH/2).translateZ(towFrontZ + 0.2));
-
-  // Tower top cap (plant room / mechanical)
-  const capGeo = new THREE.BoxGeometry(towW + 2, 3, towD + 2);
-  const capEdges = new THREE.EdgesGeometry(capGeo);
-  const cap = new THREE.LineSegments(capEdges, wireMed);
-  cap.position.set(0, towBase + towH + 1.5, 0);
-  building.add(cap);
+    new THREE.EdgesGeometry(ledGeo), accentMed
+  ).translateY(towBase + towH/2).translateZ(towFrontZ + 0.1));
 
   // ============================================================
-  // 4. ROOF GARDEN (both sides of tower, on podium roof)
+  // UPPER TOWER (narrower block above facade slab, visible in axonometry)
   // ============================================================
-  // Left side
-  const rgW = (podW - towW) / 2 - 5;
-  const rgGeo = new THREE.PlaneGeometry(rgW, podD - 10);
-  const rgEdges = new THREE.EdgesGeometry(rgGeo);
-  const rgMat = new THREE.LineBasicMaterial({ color: 0x5a9e5a, opacity: 0.2, transparent: true });
-  
-  const rgL = new THREE.LineSegments(rgEdges.clone(), rgMat);
-  rgL.rotation.x = -Math.PI / 2;
-  rgL.position.set(-(towW/2 + rgW/2 + 3), podTop + 0.2, 0);
-  rgL.userData = { name: 'Roof Garden (12)', desc: 'Both sides of tower on podium roof\nOpen-air terrace facing Victoria Harbour' };
-  building.add(rgL);
+  const upBase = towBase + towH;
+  const upGeo = new THREE.BoxGeometry(upW, upH, upD);
+  const upEdges = new THREE.EdgesGeometry(upGeo);
+  const upWire = new THREE.LineSegments(upEdges, wireMed);
+  upWire.position.set(0, upBase + upH/2, towCenterZ);
+  upWire.userData = { name: 'Upper Tower', desc: 'L9–L11 · Narrower top structure\n9. M+ Members Lounge\n10. Art-related OACF\n11. RDE (F&B)\nVisual louvre pattern on facade' };
+  building.add(upWire);
 
-  const rgR = new THREE.LineSegments(rgEdges.clone(), rgMat);
-  rgR.rotation.x = -Math.PI / 2;
-  rgR.position.set((towW/2 + rgW/2 + 3), podTop + 0.2, 0);
-  building.add(rgR);
+  // Upper tower louvres
+  for (let i = 0; i < 15; i++) {
+    const y = upBase + 1 + i * (upH / 15);
+    building.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(-upW/2, y, towCenterZ + upD/2 + 0.2),
+        new THREE.Vector3(upW/2, y, towCenterZ + upD/2 + 0.2)
+      ]), wireDim));
+  }
 
-  // ============================================================
-  // 5. CSF BUILDING (separate, on the right)
-  // ============================================================
-  const csfW = 18, csfH = 35, csfD = 22;
-  const csfX = podW/2 + 15;
-
-  const csfGeo = new THREE.BoxGeometry(csfW, csfH, csfD);
-  const csfEdges = new THREE.EdgesGeometry(csfGeo);
-  const csfWire = new THREE.LineSegments(csfEdges, wireMed);
-  csfWire.position.set(csfX, csfH/2, 0);
-  csfWire.userData = { name: 'CSF Building (13-14)', desc: 'Conservation & Storage Facility\n13: Art Storage (multiple floors)\n14: Conservation Labs (top)\n17: Parking (below)' };
-  building.add(csfWire);
-
-  // CSF floors
-  for (let i = 1; i < 8; i++) {
-    const y = i * (csfH / 8);
-    const fGeo = new THREE.PlaneGeometry(csfW - 1, csfD - 1);
+  // Upper tower floors
+  for (let i = 1; i < 5; i++) {
+    const y = upBase + i * (upH / 5);
+    const fGeo = new THREE.PlaneGeometry(upW - 1, upD - 1);
     const fEdges = new THREE.EdgesGeometry(fGeo);
     const fl = new THREE.LineSegments(fEdges, wireVDim);
     fl.rotation.x = -Math.PI / 2;
-    fl.position.set(csfX, y, 0);
+    fl.position.set(0, y, towCenterZ);
+    building.add(fl);
+  }
+
+  // Plant room cap
+  const capGeo = new THREE.BoxGeometry(upW + 4, 3, upD + 2);
+  const capEdges = new THREE.EdgesGeometry(capGeo);
+  const cap = new THREE.LineSegments(capEdges, wireDim);
+  cap.position.set(0, upBase + upH + 1.5, towCenterZ);
+  building.add(cap);
+
+  // ============================================================
+  // CSF BUILDING (separate, right side — from section)
+  // ============================================================
+  const csfGeo = new THREE.BoxGeometry(16, 30, 20);
+  const csfEdges = new THREE.EdgesGeometry(csfGeo);
+  const csfWire = new THREE.LineSegments(csfEdges, wireMed);
+  csfWire.position.set(podW/2 + 15, 15, 0);
+  csfWire.userData = { name: 'CSF Building', desc: '13. Art Storage · 14. Conservation Labs\n15. Avenue · 17. Parking\nSeparate structure connected to main building' };
+  building.add(csfWire);
+
+  for (let i = 1; i < 7; i++) {
+    const y = i * (30/7);
+    const fGeo = new THREE.PlaneGeometry(14, 18);
+    const fEdges = new THREE.EdgesGeometry(fGeo);
+    const fl = new THREE.LineSegments(fEdges, wireVDim);
+    fl.rotation.x = -Math.PI / 2;
+    fl.position.set(podW/2 + 15, y, 0);
     building.add(fl);
   }
 
   // ============================================================
-  // 6. FOUND SPACE + STUDIO (underground, irregular)
-  // ============================================================
-  const foundShape = new THREE.Shape();
-  foundShape.moveTo(-45, -30);
-  foundShape.bezierCurveTo(-50, -10, -40, 20, -25, 32);
-  foundShape.lineTo(5, 35);
-  foundShape.bezierCurveTo(20, 33, 40, 25, 48, 10);
-  foundShape.lineTo(50, -5);
-  foundShape.bezierCurveTo(48, -20, 40, -30, 30, -35);
-  foundShape.lineTo(0, -38);
-  foundShape.bezierCurveTo(-20, -37, -35, -35, -45, -30);
-
-  const foundGeo = new THREE.ExtrudeGeometry(foundShape, { depth: 7, bevelEnabled: false });
-  const foundEdges = new THREE.EdgesGeometry(foundGeo);
-  const foundWire = new THREE.LineSegments(foundEdges, wireMed);
-  foundWire.rotation.x = -Math.PI / 2;
-  foundWire.position.set(5, -5, 0);
-  foundWire.scale.set(0.85, 0.85, 0.85);
-  foundWire.userData = { name: 'Found Space + Studio (B1)', desc: '1. Found Space · 2. The Studio\nUnderground · Organic irregular form\nFollows MTR tunnel contours' };
-  building.add(foundWire);
-
-  // ============================================================
-  // 7. AIRPORT EXPRESS TUNNEL (underground)
+  // UNDERGROUND TUNNEL
   // ============================================================
   const tunGeo = new THREE.CylinderGeometry(3, 3, 80, 8, 1, true);
   const tunEdges = new THREE.EdgesGeometry(tunGeo);
   const tunWire = new THREE.LineSegments(tunEdges, wireVDim);
   tunWire.rotation.z = Math.PI / 2;
   tunWire.position.set(0, -12, 5);
-  tunWire.userData = { name: 'Airport Express Tunnel (20)', desc: 'MTR tunnel 1.5m below ground\n5 mega-trusses protect it from building loads' };
+  tunWire.userData = { name: 'Airport Express Tunnel', desc: 'MTR tunnel below building\n5 mega-trusses protect it' };
   building.add(tunWire);
 
   // ============================================================
   // ENVIRONMENT
   // ============================================================
-  const gridHelper = new THREE.GridHelper(300, 60, 0x1a1a1a, 0x0f0f0f);
-  scene.add(gridHelper);
+  scene.add(new THREE.GridHelper(300, 60, 0x181818, 0x0e0e0e));
 
-  // Waterfront
-  const waterGeo = new THREE.PlaneGeometry(160, 40);
-  const waterMat = new THREE.MeshBasicMaterial({ color: 0x4a9eff, opacity: 0.025, transparent: true, side: THREE.DoubleSide });
+  // Water
+  const waterGeo = new THREE.PlaneGeometry(160, 50);
+  const waterMat = new THREE.MeshBasicMaterial({ color: 0x4a9eff, opacity: 0.02, transparent: true, side: THREE.DoubleSide });
   const water = new THREE.Mesh(waterGeo, waterMat);
   water.rotation.x = -Math.PI / 2;
-  water.position.set(0, -0.3, podD/2 + 30);
-  water.userData = { name: 'Victoria Harbour (19)', desc: 'M+ Facade visible across harbour\nWaterfront Promenade (18) along edge' };
+  water.position.set(0, -0.3, podD/2 + 35);
+  water.userData = { name: 'Victoria Harbour', desc: 'Waterfront Promenade along edge\nM+ Facade visible across harbour' };
   building.add(water);
 
   scene.add(building);
 
   // ============================================================
-  // CAMERA CONTROLS
+  // CAMERA + CONTROLS
   // ============================================================
   let isDragging = false;
   let prevMouse = { x: 0, y: 0 };
-  let spherical = { radius: 150, theta: Math.PI / 4, phi: Math.PI / 3.2 };
+  let spherical = { radius: 160, theta: Math.PI / 4.5, phi: Math.PI / 3.5 };
   let autoRotate = true;
 
   function updateCamera() {
     camera.position.x = spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta);
     camera.position.y = spherical.radius * Math.cos(spherical.phi);
     camera.position.z = spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta);
-    camera.lookAt(0, 18, 0);
+    camera.lookAt(0, 20, 0);
   }
 
   canvas.addEventListener('mousedown', (e) => { isDragging = true; autoRotate = false; prevMouse = { x: e.clientX, y: e.clientY }; });
   canvas.addEventListener('mousemove', (e) => {
     if (!isDragging) return;
     spherical.theta -= (e.clientX - prevMouse.x) * 0.005;
-    spherical.phi = Math.max(0.2, Math.min(Math.PI * 0.7, spherical.phi + (e.clientY - prevMouse.y) * 0.005));
+    spherical.phi = Math.max(0.2, Math.min(2.2, spherical.phi + (e.clientY - prevMouse.y) * 0.005));
     prevMouse = { x: e.clientX, y: e.clientY };
     updateCamera();
   });
   canvas.addEventListener('mouseup', () => isDragging = false);
   canvas.addEventListener('mouseleave', () => isDragging = false);
   canvas.addEventListener('wheel', (e) => {
-    spherical.radius = Math.max(50, Math.min(300, spherical.radius + e.deltaY * 0.08));
+    spherical.radius = Math.max(50, Math.min(350, spherical.radius + e.deltaY * 0.08));
     updateCamera();
   }, { passive: true });
 
-  // Touch
   canvas.addEventListener('touchstart', (e) => { isDragging = true; autoRotate = false; prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY }; });
   canvas.addEventListener('touchmove', (e) => {
     if (!isDragging) return;
     spherical.theta -= (e.touches[0].clientX - prevMouse.x) * 0.005;
-    spherical.phi = Math.max(0.2, Math.min(Math.PI * 0.7, spherical.phi + (e.touches[0].clientY - prevMouse.y) * 0.005));
+    spherical.phi = Math.max(0.2, Math.min(2.2, spherical.phi + (e.touches[0].clientY - prevMouse.y) * 0.005));
     prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
     updateCamera();
     e.preventDefault();
@@ -372,24 +416,24 @@
     }
   });
 
-  // Day/Night toggle
+  // Day/Night
   const modeToggle = document.getElementById('mode-toggle');
   modeToggle.addEventListener('click', () => {
     const isDay = document.body.classList.toggle('day-mode');
     modeToggle.querySelector('.mode-icon').textContent = isDay ? '☀' : '☾';
     scene.background = new THREE.Color(isDay ? 0xf5f3ef : 0x0c0c0c);
-    scene.fog = new THREE.Fog(isDay ? 0xf5f3ef : 0x0c0c0c, 150, 350);
+    scene.fog = new THREE.Fog(isDay ? 0xf5f3ef : 0x0c0c0c, 180, 400);
   });
 
   // Animate
   let ledTime = 0;
-  setTimeout(() => { autoRotate = false; }, 25000);
+  setTimeout(() => { autoRotate = false; }, 20000);
 
   function animate() {
     requestAnimationFrame(animate);
-    if (autoRotate) { spherical.theta += 0.001; updateCamera(); }
-    ledTime += 0.015;
-    ledMat.opacity = 0.03 + Math.sin(ledTime) * 0.02;
+    if (autoRotate) { spherical.theta += 0.0012; updateCamera(); }
+    ledTime += 0.012;
+    ledMat.opacity = 0.03 + Math.sin(ledTime) * 0.015;
     renderer.render(scene, camera);
   }
 
