@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>M+ · Orthographic Drawings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #fafafa;
+      --fg: #111;
+      --dim: #888;
+      --line: #222;
+      --accent: #d4a020;
+      --grid: #e8e8e8;
+      --font: 'IBM Plex Mono', monospace;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header */
+    header {
+      padding: 40px 60px 20px;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .header-left h1 {
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+    .header-left p {
+      font-size: 10px;
+      color: var(--dim);
+      margin-top: 4px;
+    }
+    .header-right {
+      font-size: 9px;
+      color: var(--dim);
+      text-align: right;
+    }
+
+    /* Main layout */
+    main {
+      padding: 40px 60px;
+    }
+
+    .drawing-section {
+      margin-bottom: 80px;
+    }
+
+    .drawing-title {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 0.5px solid #ccc;
+    }
+
+    .drawing-wrap {
+      width: 100%;
+      overflow: visible;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* SVG styles */
+    .line { stroke: var(--line); fill: none; stroke-width: 0.8; }
+    .line-thick { stroke: var(--line); fill: none; stroke-width: 1.5; }
+    .line-thin { stroke: var(--line); fill: none; stroke-width: 0.4; }
+    .line-dim { stroke: #999; fill: none; stroke-width: 0.3; stroke-dasharray: 2,2; }
+    .fill-solid { fill: var(--line); stroke: none; }
+    .fill-dark { fill: #333; stroke: none; }
+    .fill-mid { fill: #666; stroke: none; }
+    .fill-light { fill: #ddd; stroke: none; }
+    .fill-accent { fill: var(--accent); opacity: 0.15; stroke: none; }
+    .text-label { font-family: var(--font); font-size: 6px; fill: var(--dim); }
+    .text-num { font-family: var(--font); font-size: 7px; fill: var(--fg); font-weight: 500; }
+    .text-dim { font-family: var(--font); font-size: 5px; fill: #aaa; }
+    .dim-line { stroke: #999; fill: none; stroke-width: 0.3; }
+    .dim-text { font-family: var(--font); font-size: 5px; fill: #999; }
+    .ground-line { stroke: var(--line); fill: none; stroke-width: 0.6; }
+    .ground-fill { fill: #111; }
+    .grid-line { stroke: var(--grid); fill: none; stroke-width: 0.2; }
+    .louvre { stroke: var(--line); fill: none; stroke-width: 0.3; opacity: 0.5; }
+    .louvre-accent { stroke: var(--accent); fill: none; stroke-width: 0.4; opacity: 0.3; }
+
+    /* Legend */
+    .legend {
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 0.5px solid #ddd;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      font-size: 9px;
+      color: var(--dim);
+    }
+    .legend-item {
+      display: flex;
+      gap: 6px;
+    }
+    .legend-num {
+      font-weight: 500;
+      color: var(--fg);
+      min-width: 16px;
+    }
+
+    /* Footer */
+    footer {
+      padding: 30px 60px;
+      border-top: 1px solid #ddd;
+      font-size: 8px;
+      color: var(--dim);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header, main, footer { padding-left: 20px; padding-right: 20px; }
+      .legend { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>M+ MUSEUM</h1>
+    <p>38 Museum Drive, West Kowloon Cultural District, Hong Kong</p>
+  </div>
+  <div class="header-right">
+    Herzog & de Meuron · 415<br>
+    TFP Farrells · Arup
+  </div>
+</header>
+
+<main>
+
+  <!-- ============================================================ -->
+  <!-- FRONT ELEVATION (Harbour side) -->
+  <!-- ============================================================ -->
+  <section class="drawing-section">
+    <div class="drawing-title">Front Elevation · South (Harbour Side)</div>
+    <div class="drawing-wrap">
+      <svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+        <!-- Ground -->
+        <line x1="20" y1="320" x2="780" y2="320" class="ground-line"/>
+        <rect x="20" y="320" width="760" height="80" class="ground-fill" opacity="0.03"/>
+
+        <!-- Podium (wide block, ~160m, with horizontal louvres) -->
+        <rect x="120" y="265" width="560" height="55" class="line-thick" fill="none"/>
+        <!-- Podium louvres -->
+        <g class="louvre">
+          <line x1="120" y1="270" x2="680" y2="270"/>
+          <line x1="120" y1="274" x2="680" y2="274"/>
+          <line x1="120" y1="278" x2="680" y2="278"/>
+          <line x1="120" y1="282" x2="680" y2="282"/>
+          <line x1="120" y1="286" x2="680" y2="286"/>
+          <line x1="120" y1="290" x2="680" y2="290"/>
+          <line x1="120" y1="294" x2="680" y2="294"/>
+          <line x1="120" y1="298" x2="680" y2="298"/>
+          <line x1="120" y1="302" x2="680" y2="302"/>
+          <line x1="120" y1="306" x2="680" y2="306"/>
+          <line x1="120" y1="310" x2="680" y2="310"/>
+          <line x1="120" y1="314" x2="680" y2="314"/>
+          <line x1="120" y1="318" x2="680" y2="318"/>
+        </g>
+
+        <!-- Pilotis (open ground floor) -->
+        <g class="line-thin">
+          <line x1="160" y1="320" x2="160" y2="265"/>
+          <line x1="220" y1="320" x2="220" y2="265"/>
+          <line x1="300" y1="320" x2="300" y2="265"/>
+          <line x1="380" y1="320" x2="380" y2="265"/>
+          <line x1="420" y1="320" x2="420" y2="265"/>
+          <line x1="500" y1="320" x2="500" y2="265"/>
+          <line x1="580" y1="320" x2="580" y2="265"/>
+          <line x1="640" y1="320" x2="640" y2="265"/>
+        </g>
+
+        <!-- Tower (NARROW from front = shallow depth, but we see its WIDE face here) -->
+        <!-- Actually from FRONT (harbour), tower facade is ~110m wide -->
+        <!-- But in elevation it's the same width as podium since facade spans it -->
+        <!-- The HdM section shows tower narrow because it's the SIDE view -->
+        <!-- Front elevation: tower looks like a wide flat slab above podium -->
+        <rect x="180" y="80" width="440" height="185" class="line-thick" fill="none"/>
+        
+        <!-- Tower LED louvres (dense horizontal lines) -->
+        <g class="louvre-accent">
+          <line x1="180" y1="85" x2="620" y2="85"/>
+          <line x1="180" y1="89" x2="620" y2="89"/>
+          <line x1="180" y1="93" x2="620" y2="93"/>
+          <line x1="180" y1="97" x2="620" y2="97"/>
+          <line x1="180" y1="101" x2="620" y2="101"/>
+          <line x1="180" y1="105" x2="620" y2="105"/>
+          <line x1="180" y1="109" x2="620" y2="109"/>
+          <line x1="180" y1="113" x2="620" y2="113"/>
+          <line x1="180" y1="117" x2="620" y2="117"/>
+          <line x1="180" y1="121" x2="620" y2="121"/>
+          <line x1="180" y1="125" x2="620" y2="125"/>
+          <line x1="180" y1="129" x2="620" y2="129"/>
+          <line x1="180" y1="133" x2="620" y2="133"/>
+          <line x1="180" y1="137" x2="620" y2="137"/>
+          <line x1="180" y1="141" x2="620" y2="141"/>
+          <line x1="180" y1="145" x2="620" y2="145"/>
+          <line x1="180" y1="149" x2="620" y2="149"/>
+          <line x1="180" y1="153" x2="620" y2="153"/>
+          <line x1="180" y1="157" x2="620" y2="157"/>
+          <line x1="180" y1="161" x2="620" y2="161"/>
+          <line x1="180" y1="165" x2="620" y2="165"/>
+          <line x1="180" y1="169" x2="620" y2="169"/>
+          <line x1="180" y1="173" x2="620" y2="173"/>
+          <line x1="180" y1="177" x2="620" y2="177"/>
+          <line x1="180" y1="181" x2="620" y2="181"/>
+          <line x1="180" y1="185" x2="620" y2="185"/>
+          <line x1="180" y1="189" x2="620" y2="189"/>
+          <line x1="180" y1="193" x2="620" y2="193"/>
+          <line x1="180" y1="197" x2="620" y2="197"/>
+          <line x1="180" y1="201" x2="620" y2="201"/>
+          <line x1="180" y1="205" x2="620" y2="205"/>
+          <line x1="180" y1="209" x2="620" y2="209"/>
+          <line x1="180" y1="213" x2="620" y2="213"/>
+          <line x1="180" y1="217" x2="620" y2="217"/>
+          <line x1="180" y1="221" x2="620" y2="221"/>
+          <line x1="180" y1="225" x2="620" y2="225"/>
+          <line x1="180" y1="229" x2="620" y2="229"/>
+          <line x1="180" y1="233" x2="620" y2="233"/>
+          <line x1="180" y1="237" x2="620" y2="237"/>
+          <line x1="180" y1="241" x2="620" y2="241"/>
+          <line x1="180" y1="245" x2="620" y2="245"/>
+          <line x1="180" y1="249" x2="620" y2="249"/>
+          <line x1="180" y1="253" x2="620" y2="253"/>
+          <line x1="180" y1="257" x2="620" y2="257"/>
+          <line x1="180" y1="261" x2="620" y2="261"/>
+        </g>
+
+        <!-- Upper tower (narrower, above main facade) -->
+        <rect x="330" y="40" width="140" height="40" class="line" fill="none"/>
+        <g class="louvre">
+          <line x1="330" y1="45" x2="470" y2="45"/>
+          <line x1="330" y1="50" x2="470" y2="50"/>
+          <line x1="330" y1="55" x2="470" y2="55"/>
+          <line x1="330" y1="60" x2="470" y2="60"/>
+          <line x1="330" y1="65" x2="470" y2="65"/>
+          <line x1="330" y1="70" x2="470" y2="70"/>
+          <line x1="330" y1="75" x2="470" y2="75"/>
+        </g>
+
+        <!-- Roof garden indicators (both sides at podium roof) -->
+        <line x1="120" y1="265" x2="180" y2="265" stroke="#5a9e5a" stroke-width="1.5" opacity="0.4"/>
+        <line x1="620" y1="265" x2="680" y2="265" stroke="#5a9e5a" stroke-width="1.5" opacity="0.4"/>
+
+        <!-- Dimensions -->
+        <line x1="120" y1="345" x2="680" y2="345" class="dim-line"/>
+        <line x1="120" y1="342" x2="120" y2="348" class="dim-line"/>
+        <line x1="680" y1="342" x2="680" y2="348" class="dim-line"/>
+        <text x="400" y="355" text-anchor="middle" class="dim-text">~160m</text>
+
+        <!-- Height dimension -->
+        <line x1="85" y1="40" x2="85" y2="320" class="dim-line"/>
+        <line x1="82" y1="40" x2="88" y2="40" class="dim-line"/>
+        <line x1="82" y1="320" x2="88" y2="320" class="dim-line"/>
+        <text x="75" y="180" text-anchor="end" class="dim-text" transform="rotate(-90,75,180)">~65m</text>
+
+        <!-- Labels -->
+        <text x="400" y="375" text-anchor="middle" class="text-label">FRONT ELEVATION · SOUTH (HARBOUR)</text>
+        <text x="720" y="285" class="text-dim">12</text>
+        <text x="100" y="285" class="text-dim">12</text>
+        <text x="400" y="295" text-anchor="middle" class="text-dim">5 · GALLERIES</text>
+        <text x="400" y="170" text-anchor="middle" class="text-dim">M+ FACADE (LED)</text>
+        <text x="400" y="55" text-anchor="middle" class="text-dim">11 · RDE</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SIDE SECTION (Cross Section B — matching HdM drawing) -->
+  <!-- ============================================================ -->
+  <section class="drawing-section">
+    <div class="drawing-title">Cross Section B · 415_DR_2110_002</div>
+    <div class="drawing-wrap">
+      <svg viewBox="0 0 800 450" preserveAspectRatio="xMidYMid meet">
+        <!-- Ground line -->
+        <line x1="30" y1="310" x2="770" y2="310" class="ground-line"/>
+        <rect x="30" y="310" width="740" height="140" class="ground-fill" opacity="0.04"/>
+        
+        <!-- Underground: ground fill -->
+        <rect x="30" y="310" width="250" height="30" class="fill-solid" opacity="0.08"/>
+
+        <!-- 19. Victoria Harbour -->
+        <rect x="30" y="312" width="100" height="25" fill="none" class="line-thin"/>
+        <text x="80" y="328" text-anchor="middle" class="text-dim">19</text>
+
+        <!-- 18. Waterfront Promenade -->
+        <rect x="130" y="308" width="50" height="5" fill="none" class="line-thin"/>
+        <text x="155" y="306" text-anchor="middle" class="text-dim">18</text>
+
+        <!-- PODIUM (wide, 3 levels) -->
+        <rect x="180" y="260" width="370" height="50" class="line-thick" fill="none"/>
+        <!-- Floor lines -->
+        <line x1="180" y1="277" x2="550" y2="277" class="line-thin"/>
+        <line x1="180" y1="293" x2="550" y2="293" class="line-thin"/>
+        
+        <!-- Podium labels -->
+        <text x="260" y="271" class="text-num">5</text>
+        <text x="430" y="271" class="text-num">5</text>
+        <text x="365" y="270" text-anchor="middle" class="text-num">4</text>
+        <text x="365" y="288" text-anchor="middle" class="text-num">3</text>
+
+        <!-- Pilotis zone -->
+        <line x1="200" y1="310" x2="200" y2="260" class="line-thin"/>
+        <line x1="250" y1="310" x2="250" y2="260" class="line-thin"/>
+        <line x1="310" y1="310" x2="310" y2="260" class="line-thin"/>
+        <line x1="365" y1="310" x2="365" y2="260" class="line-thin"/>
+        <line x1="420" y1="310" x2="420" y2="260" class="line-thin"/>
+        <line x1="480" y1="310" x2="480" y2="260" class="line-thin"/>
+        <line x1="530" y1="310" x2="530" y2="260" class="line-thin"/>
+
+        <!-- 12. Roof Garden (both sides of tower) -->
+        <line x1="180" y1="260" x2="340" y2="260" stroke="#5a9e5a" stroke-width="1" opacity="0.5"/>
+        <line x1="390" y1="260" x2="550" y2="260" stroke="#5a9e5a" stroke-width="1" opacity="0.5"/>
+        <text x="260" y="256" text-anchor="middle" class="text-dim">12</text>
+        <text x="470" y="256" text-anchor="middle" class="text-dim">12</text>
+
+        <!-- TOWER (narrow in section! ~20m shown here) -->
+        <rect x="340" y="60" width="50" height="200" class="line-thick" fill="none"/>
+        
+        <!-- Tower floor lines -->
+        <line x1="340" y1="75" x2="390" y2="75" class="line-thin"/>
+        <line x1="340" y1="90" x2="390" y2="90" class="line-thin"/>
+        <line x1="340" y1="105" x2="390" y2="105" class="line-thin"/>
+        <line x1="340" y1="120" x2="390" y2="120" class="line-thin"/>
+        <line x1="340" y1="135" x2="390" y2="135" class="line-thin"/>
+        <line x1="340" y1="150" x2="390" y2="150" class="line-thin"/>
+        <line x1="340" y1="165" x2="390" y2="165" class="line-thin"/>
+        <line x1="340" y1="180" x2="390" y2="180" class="line-thin"/>
+        <line x1="340" y1="195" x2="390" y2="195" class="line-thin"/>
+        <line x1="340" y1="210" x2="390" y2="210" class="line-thin"/>
+        <line x1="340" y1="225" x2="390" y2="225" class="line-thin"/>
+        <line x1="340" y1="240" x2="390" y2="240" class="line-thin"/>
+        <line x1="340" y1="248" x2="390" y2="248" class="line-thin"/>
+
+        <!-- Tower floor numbers (right side) -->
+        <text x="397" y="70" class="text-num">11</text>
+        <text x="397" y="85" class="text-num">11</text>
+        <text x="397" y="100" class="text-num">11</text>
+        <text x="397" y="115" class="text-num">10</text>
+        <text x="397" y="130" class="text-num">10</text>
+        <text x="397" y="145" class="text-num">9</text>
+        <text x="397" y="160" class="text-num">8</text>
+        <text x="397" y="175" class="text-num">8</text>
+        <text x="397" y="190" class="text-num">8</text>
+        <text x="397" y="205" class="text-num">8</text>
+        <text x="397" y="220" class="text-num">7</text>
+        <text x="397" y="245" class="text-num">6</text>
+
+        <!-- Tower louvre pattern (facade side, left) -->
+        <g class="louvre-accent">
+          <line x1="338" y1="63" x2="338" y2="258"/>
+        </g>
+
+        <!-- 1. Found Space + 2. Studio (underground) -->
+        <rect x="270" y="312" width="200" height="60" class="line" fill="none"/>
+        <line x1="350" y1="312" x2="350" y2="372" class="line-thin"/>
+        <text x="310" y="345" text-anchor="middle" class="text-num">1</text>
+        <text x="420" y="345" text-anchor="middle" class="text-num">2</text>
+
+        <!-- 20. Airport Express Tunnel -->
+        <rect x="290" y="385" width="55" height="30" rx="3" class="line" fill="none"/>
+        <text x="318" y="403" text-anchor="middle" class="text-dim">20</text>
+        
+        <!-- 21. MTR Cooling -->
+        <rect x="255" y="390" width="25" height="20" class="line-thin" fill="none"/>
+        <text x="268" y="403" text-anchor="middle" class="text-dim">21</text>
+
+        <!-- CSF Building (right side, separate) -->
+        <rect x="600" y="170" width="80" height="140" class="line-thick" fill="none"/>
+        <line x1="600" y1="195" x2="680" y2="195" class="line-thin"/>
+        <line x1="600" y1="220" x2="680" y2="220" class="line-thin"/>
+        <line x1="600" y1="245" x2="680" y2="245" class="line-thin"/>
+        <line x1="600" y1="270" x2="680" y2="270" class="line-thin"/>
+        <line x1="600" y1="295" x2="680" y2="295" class="line-thin"/>
+        
+        <text x="640" y="185" text-anchor="middle" class="text-num">14</text>
+        <text x="640" y="210" text-anchor="middle" class="text-num">14</text>
+        <text x="640" y="235" text-anchor="middle" class="text-num">13</text>
+        <text x="640" y="260" text-anchor="middle" class="text-num">13</text>
+        <text x="640" y="285" text-anchor="middle" class="text-num">13</text>
+        <text x="640" y="305" text-anchor="middle" class="text-num">13</text>
+
+        <!-- 15. Avenue -->
+        <rect x="555" y="308" width="40" height="6" fill="none" class="line-thin"/>
+        <text x="575" y="305" text-anchor="middle" class="text-dim">15</text>
+
+        <!-- 16. Carriageway -->
+        <rect x="595" y="308" width="40" height="6" fill="none" class="line-thin"/>
+        <text x="615" y="305" text-anchor="middle" class="text-dim">16</text>
+
+        <!-- 17. Parking (under CSF) -->
+        <rect x="610" y="316" width="60" height="30" fill="none" class="line-thin"/>
+        <text x="640" y="335" text-anchor="middle" class="text-dim">17</text>
+
+        <!-- Dimensions -->
+        <line x1="180" y1="430" x2="550" y2="430" class="dim-line"/>
+        <line x1="180" y1="427" x2="180" y2="433" class="dim-line"/>
+        <line x1="550" y1="427" x2="550" y2="433" class="dim-line"/>
+        <text x="365" y="440" text-anchor="middle" class="dim-text">~160m (podium)</text>
+
+        <line x1="150" y1="60" x2="150" y2="310" class="dim-line"/>
+        <line x1="147" y1="60" x2="153" y2="60" class="dim-line"/>
+        <line x1="147" y1="310" x2="153" y2="310" class="dim-line"/>
+        <text x="140" y="185" text-anchor="end" class="dim-text" transform="rotate(-90,140,185)">~65m</text>
+
+        <!-- Tower width dim -->
+        <line x1="340" y1="50" x2="390" y2="50" class="dim-line"/>
+        <line x1="340" y1="47" x2="340" y2="53" class="dim-line"/>
+        <line x1="390" y1="47" x2="390" y2="53" class="dim-line"/>
+        <text x="365" y="46" text-anchor="middle" class="dim-text">~20m</text>
+
+        <!-- Section label -->
+        <text x="400" y="445" text-anchor="middle" class="text-label">CROSS SECTION B · 415_DR_2110_002</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- PLAN VIEW (Roof level, showing tower on podium) -->
+  <!-- ============================================================ -->
+  <section class="drawing-section">
+    <div class="drawing-title">Plan · Roof Level (Tower + Podium)</div>
+    <div class="drawing-wrap">
+      <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet">
+        <!-- Podium outline (large rectangle) -->
+        <rect x="150" y="130" width="500" height="340" class="line-thick" fill="none"/>
+        
+        <!-- Internal podium grid -->
+        <g class="line-thin" opacity="0.3">
+          <line x1="150" y1="200" x2="650" y2="200"/>
+          <line x1="150" y1="270" x2="650" y2="270"/>
+          <line x1="150" y1="340" x2="650" y2="340"/>
+          <line x1="150" y1="400" x2="650" y2="400"/>
+          <line x1="250" y1="130" x2="250" y2="470"/>
+          <line x1="350" y1="130" x2="350" y2="470"/>
+          <line x1="450" y1="130" x2="450" y2="470"/>
+          <line x1="550" y1="130" x2="550" y2="470"/>
+        </g>
+
+        <!-- Tower footprint (wide × shallow, positioned toward harbour/south) -->
+        <rect x="175" y="140" width="450" height="80" class="line-thick" fill="none"/>
+        <rect x="175" y="140" width="450" height="80" class="fill-dark" opacity="0.08"/>
+
+        <!-- Tower internal structure -->
+        <line x1="175" y1="165" x2="625" y2="165" class="line-thin"/>
+        <line x1="300" y1="140" x2="300" y2="220" class="line-thin"/>
+        <line x1="400" y1="140" x2="400" y2="220" class="line-thin"/>
+        <line x1="500" y1="140" x2="500" y2="220" class="line-thin"/>
+
+        <!-- Upper tower (narrower, centered) -->
+        <rect x="320" y="150" width="160" height="60" class="line" fill="none"/>
+        <rect x="320" y="150" width="160" height="60" class="fill-dark" opacity="0.12"/>
+
+        <!-- Roof garden (hatched area around tower) -->
+        <g opacity="0.15">
+          <rect x="155" y="225" width="490" height="240" fill="#5a9e5a"/>
+        </g>
+
+        <!-- Facade indicator (south edge of tower = LED side) -->
+        <line x1="175" y1="140" x2="625" y2="140" stroke="#d4a020" stroke-width="2.5" opacity="0.5"/>
+
+        <!-- North arrow -->
+        <g transform="translate(720, 80)">
+          <line x1="0" y1="20" x2="0" y2="-10" class="line" marker-end="none"/>
+          <polygon points="0,-15 -4,-5 4,-5" class="fill-solid"/>
+          <text x="0" y="30" text-anchor="middle" class="text-dim">N</text>
+        </g>
+
+        <!-- Labels -->
+        <text x="400" y="185" text-anchor="middle" class="text-label">TOWER (L6–L11)</text>
+        <text x="400" y="133" text-anchor="middle" class="text-dim">M+ FACADE (SOUTH → HARBOUR)</text>
+        <text x="400" y="350" text-anchor="middle" class="text-label">ROOF GARDEN (12)</text>
+        <text x="400" y="490" text-anchor="middle" class="text-label">PLAN · ROOF LEVEL</text>
+
+        <!-- Dimensions -->
+        <line x1="150" y1="485" x2="650" y2="485" class="dim-line"/>
+        <line x1="150" y1="482" x2="150" y2="488" class="dim-line"/>
+        <line x1="650" y1="482" x2="650" y2="488" class="dim-line"/>
+        <text x="400" y="496" text-anchor="middle" class="dim-text">~160m</text>
+
+        <line x1="130" y1="130" x2="130" y2="470" class="dim-line"/>
+        <line x1="127" y1="130" x2="133" y2="130" class="dim-line"/>
+        <line x1="127" y1="470" x2="133" y2="470" class="dim-line"/>
+        <text x="120" y="300" text-anchor="end" class="dim-text" transform="rotate(-90,120,300)">~110m</text>
+
+        <!-- Tower depth dim -->
+        <line x1="660" y1="140" x2="660" y2="220" class="dim-line"/>
+        <line x1="657" y1="140" x2="663" y2="140" class="dim-line"/>
+        <line x1="657" y1="220" x2="663" y2="220" class="dim-line"/>
+        <text x="672" y="180" class="dim-text">~20m</text>
+
+        <!-- Tower width dim -->
+        <line x1="175" y1="125" x2="625" y2="125" class="dim-line"/>
+        <line x1="175" y1="122" x2="175" y2="128" class="dim-line"/>
+        <line x1="625" y1="122" x2="625" y2="128" class="dim-line"/>
+        <text x="400" y="120" text-anchor="middle" class="dim-text">~110m (facade)</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><span class="legend-num">1</span> Found Space</div>
+    <div class="legend-item"><span class="legend-num">2</span> The Studio</div>
+    <div class="legend-item"><span class="legend-num">3</span> Main Hall</div>
+    <div class="legend-item"><span class="legend-num">4</span> Atrium</div>
+    <div class="legend-item"><span class="legend-num">5</span> Galleries</div>
+    <div class="legend-item"><span class="legend-num">6</span> Terrace Restaurant</div>
+    <div class="legend-item"><span class="legend-num">7</span> Research Centre</div>
+    <div class="legend-item"><span class="legend-num">8</span> Office</div>
+    <div class="legend-item"><span class="legend-num">9</span> M+ Members Lounge</div>
+    <div class="legend-item"><span class="legend-num">10</span> Art-related OACF</div>
+    <div class="legend-item"><span class="legend-num">11</span> RDE (F&B)</div>
+    <div class="legend-item"><span class="legend-num">12</span> Roof Garden</div>
+    <div class="legend-item"><span class="legend-num">13</span> CSF Art Storage</div>
+    <div class="legend-item"><span class="legend-num">14</span> CSF Conservation Labs</div>
+    <div class="legend-item"><span class="legend-num">15</span> Avenue</div>
+    <div class="legend-item"><span class="legend-num">16</span> Carriageway</div>
+    <div class="legend-item"><span class="legend-num">17</span> Parking</div>
+    <div class="legend-item"><span class="legend-num">18</span> Waterfront Promenade</div>
+    <div class="legend-item"><span class="legend-num">19</span> Victoria Harbour</div>
+    <div class="legend-item"><span class="legend-num">20</span> Airport Express Line Tunnel</div>
+    <div class="legend-item"><span class="legend-num">21</span> MTR / Elements Cooling Main</div>
+  </div>
+
+</main>
+
+<footer>
+  <span>M+ Museum · West Kowloon Cultural District · Hong Kong</span>
+  <span>Data: HK Gov 3D Map API + Herzog & de Meuron 415 Drawings</span>
+</footer>
+
+</body>
+</html>
