@@ -38,12 +38,16 @@
 
   const building = new THREE.Group();
 
-  // === PROPORTIONS (based on HdM section) ===
+  // === PROPORTIONS (based on HdM axonometry + section) ===
   // Podium: wide (~160m) x ~15m tall x ~80m deep
-  // Tower: narrow (~30m) x ~50m tall x ~18m deep (very slender)
+  // Tower: narrow front-to-back (~18m deep) but the FACADE wall is ~110m wide
+  // The facade is a massive flat screen spanning most of podium width
+  // Tower structure behind facade is only ~30m wide
   // Scale: 1 unit = ~2m
   const podW = 80, podH = 7.5, podD = 40;
-  const towW = 15, towH = 45, towD = 9;
+  const towW = 15, towH = 45, towD = 9; // actual tower structure (narrow)
+  const facadeW = 55; // M+ Facade wall (~110m) - much wider than tower!
+  const facadeH = 44; // almost full tower height
   const towOffsetX = 0; // centered per section drawing
 
   // === UNDERGROUND: Found Space + Studio + Tunnel ===
@@ -118,11 +122,12 @@
   roofGarden.userData = { name: 'Roof Garden', desc: 'Level 3 · Faces Victoria Harbour\nOpen-air terrace spanning podium roof' };
   building.add(roofGarden);
 
-  // === TOWER (very slender, rises from center of podium) ===
+  // === TOWER (narrow structure BEHIND the wide facade) ===
+  // From axonometry: tower is narrow front-to-back, sits behind facade
   const towerGeo = new THREE.BoxGeometry(towW, towH, towD);
   const towerEdges = new THREE.EdgesGeometry(towerGeo);
   const towerWire = new THREE.LineSegments(towerEdges, wireMatBright);
-  towerWire.position.set(towOffsetX, podH + towH / 2, 0);
+  towerWire.position.set(towOffsetX, podH + towH / 2, -towD / 2); // behind facade
   towerWire.userData = { name: 'Tower', desc: 'L6–L11 (visible floors)\nL6: Terrace Restaurant\nL7: Research Centre\nL8: Offices (×4 floors)\nL9: M+ Members Lounge\nL10: Art-related OACF\nL11: RDE (F&B) — top floors' };
   building.add(towerWire);
 
@@ -137,33 +142,58 @@
     const fEdges = new THREE.EdgesGeometry(fGeo);
     const fLine = new THREE.LineSegments(fEdges, wireMatDim);
     fLine.rotation.x = -Math.PI / 2;
-    fLine.position.set(towOffsetX, y, 0);
+    fLine.position.set(towOffsetX, y, -towD / 2);
     building.add(fLine);
   }
 
-  // === LED FACADE (south face of tower, facing harbour) ===
-  const ledH = towH - 2;
-  const ledW = towW;
-  const ledGeo = new THREE.PlaneGeometry(ledW, ledH);
-  const ledMat = new THREE.MeshBasicMaterial({ color: 0xe8c547, opacity: 0.12, transparent: true, side: THREE.DoubleSide });
+  // Small tower top (the narrow top visible above facade in axonometry)
+  const topGeo = new THREE.BoxGeometry(towW, 5, towD);
+  const topEdges = new THREE.EdgesGeometry(topGeo);
+  const topWire = new THREE.LineSegments(topEdges, wireMat);
+  topWire.position.set(towOffsetX, podH + towH + 2.5, -towD / 2);
+  building.add(topWire);
+
+  // === M+ FACADE (massive flat wall, spanning most of podium width) ===
+  // Per axonometry: facade is a huge screen wall MUCH wider than the narrow tower
+  // 110m wide × 65.8m high - the defining visual element of M+
+  const ledGeo = new THREE.PlaneGeometry(facadeW, facadeH);
+  const ledMat = new THREE.MeshBasicMaterial({ color: 0xe8c547, opacity: 0.08, transparent: true, side: THREE.DoubleSide });
   const ledPlane = new THREE.Mesh(ledGeo, ledMat);
-  ledPlane.position.set(towOffsetX, podH + towH / 2, towD / 2 + 0.2);
-  ledPlane.userData = { name: 'M+ Facade (LED)', desc: '65.8m high × 110m wide\nEmbedded LED light bars in ceramic louvres\nScreens commissioned moving image artworks\nVisible from harbour promenade & HK Island' };
+  ledPlane.position.set(towOffsetX, podH + facadeH / 2, towD / 2 + 0.5);
+  ledPlane.userData = { name: 'M+ Facade (LED)', desc: '65.8m high × 110m wide\nMassive screen wall spanning podium width\nEmbedded LED light bars in ceramic louvres\nScreens commissioned moving image artworks\nVisible from harbour promenade & HK Island' };
   building.add(ledPlane);
 
-  const ledEdgeGeo = new THREE.EdgesGeometry(new THREE.PlaneGeometry(ledW, ledH));
+  // Facade wireframe edge
+  const ledEdgeGeo = new THREE.EdgesGeometry(new THREE.PlaneGeometry(facadeW, facadeH));
   const ledEdge = new THREE.LineSegments(ledEdgeGeo, accentMat);
   ledEdge.position.copy(ledPlane.position);
   building.add(ledEdge);
 
-  // Louvre lines on facade
-  for (let i = 0; i < 20; i++) {
-    const ly = podH + 2 + i * (ledH / 20);
+  // Facade fill (slightly visible solid to show the wall mass)
+  const facadeSolidGeo = new THREE.BoxGeometry(facadeW, facadeH, 1.5);
+  const facadeSolidEdges = new THREE.EdgesGeometry(facadeSolidGeo);
+  const facadeSolid = new THREE.LineSegments(facadeSolidEdges, new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.2, transparent: true }));
+  facadeSolid.position.set(towOffsetX, podH + facadeH / 2, towD / 2 + 0.5);
+  building.add(facadeSolid);
+
+  // Horizontal louvre lines across entire facade width (the characteristic pattern)
+  for (let i = 0; i < 30; i++) {
+    const ly = podH + 2 + i * (facadeH / 30);
     const lineGeo = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(towOffsetX - ledW/2, ly, towD/2 + 0.3),
-      new THREE.Vector3(towOffsetX + ledW/2, ly, towD/2 + 0.3),
+      new THREE.Vector3(towOffsetX - facadeW/2, ly, towD/2 + 1.3),
+      new THREE.Vector3(towOffsetX + facadeW/2, ly, towD/2 + 1.3),
     ]);
-    building.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0xe8c547, opacity: 0.15, transparent: true })));
+    building.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0xe8c547, opacity: 0.12, transparent: true })));
+  }
+
+  // Vertical divisions on facade (subtle)
+  for (let i = 1; i < 8; i++) {
+    const lx = towOffsetX - facadeW/2 + i * (facadeW / 8);
+    const vGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(lx, podH + 1, towD/2 + 1.3),
+      new THREE.Vector3(lx, podH + facadeH - 1, towD/2 + 1.3),
+    ]);
+    building.add(new THREE.Line(vGeo, new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.05, transparent: true })));
   }
 
   // === CSF BUILDING (Conservation & Storage Facility - to the right) ===
