@@ -1,0 +1,5 @@
+# Large 3D tile files - tracked via Git LFS or download script
+# Uncomment below if not using LFS:
+# data/3d-tiles/*.b3dm
+__pycache__/
+*.pyc

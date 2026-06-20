@@ -1,0 +1,428 @@
+{
+  "metadata": {
+    "project": "M+ Building Data",
+    "description": "Structured data for M+ Museum, West Kowloon Cultural District, Hong Kong",
+    "sources": [
+      "HK Gov 3D Visualisation Map API (3d.map.gov.hk)",
+      "HK Gov Location Search API (www.map.gov.hk)",
+      "HK Gov Indoor Map API (mapapi.hkmapservice.gov.hk) - NOT AVAILABLE for M+",
+      "M+ Official Website (mplus.org.hk)",
+      "Arup Project Page",
+      "Herzog & de Meuron Project #415",
+      "HK Atlas"
+    ],
+    "last_updated": "2026-06-20",
+    "coordinate_systems": {
+      "wgs84": {
+        "lat": 22.3019,
+        "lon": 114.1578
+      },
+      "hk80_grid": {
+        "x": 834441,
+        "y": 817991
+      },
+      "ecef": {
+        "x": -2416169.75,
+        "y": 5386829.31,
+        "z": 2405375.6
+      }
+    }
+  },
+  "building": {
+    "name_en": "M+",
+    "name_zh": "M+",
+    "full_name_en": "M+ Museum",
+    "full_name_zh": "M+ 博物館",
+    "address_en": "38 Museum Drive, West Kowloon Cultural District, Kowloon, Hong Kong",
+    "address_zh": "香港九龍西九文化區博物館道38號",
+    "district_en": "Yau Tsim Mong District",
+    "district_zh": "油尖旺區",
+    "owner": "West Kowloon Cultural District Authority (WKCDA)",
+    "operator": "M+ Museum",
+    "year_completed": 2020,
+    "year_opened": 2021,
+    "opening_date": "2021-11-12"
+  },
+  "architecture": {
+    "architects": [
+      {
+        "name": "Herzog & de Meuron",
+        "role": "Lead Architect",
+        "location": "Basel, Switzerland"
+      },
+      {
+        "name": "TFP Farrells",
+        "role": "Executive Architect / Local Partner",
+        "location": "Hong Kong"
+      }
+    ],
+    "engineers": [
+      {
+        "name": "Arup",
+        "role": "Structural, Civil, MEP, Facade, Fire, Acoustics, Lighting, Landscape, Security, Transport"
+      }
+    ],
+    "other_consultants": [
+      {
+        "name": "Vogt Landscape Architects",
+        "role": "Landscape Design",
+        "location": "Zurich"
+      },
+      {
+        "name": "iArt",
+        "role": "Facade Media Screen Design",
+        "location": "Basel"
+      }
+    ],
+    "style": "Contemporary",
+    "form": "Inverted-T (倒T字型)",
+    "form_description": "A podium (horizontal) fused with a slender tower (vertical) forming an inverted T shape",
+    "height_m": 65,
+    "floors_above_ground": 20,
+    "floors_below_ground": 3,
+    "total_area_sqm": 65000,
+    "exhibition_area_sqm": 17000,
+    "galleries_count": 33,
+    "facade": {
+      "type": "Terracotta + LED",
+      "ceramic_tiles_count": 140000,
+      "description": "Horizontal louvre structure with ceramic tiles and recessed LED light bars",
+      "led_screen_height_m": 65.8,
+      "led_screen_width_m": 110,
+      "orientation": "Facing Victoria Harbour (South)",
+      "purpose": "Display commissioned moving image artworks at night"
+    },
+    "structural_features": [
+      {
+        "name": "Mega-Trusses",
+        "count": 5,
+        "purpose": "Prevent building loading MTR Airport Express + Tung Chung Line tunnels below",
+        "description": "Building spans above railway tunnels which are only 1.5m below ground level"
+      },
+      {
+        "name": "Found Space",
+        "type": "Underground exhibition hall",
+        "description": "Excavated subterranean space following contours of the MTR tunnel, designed for large installations"
+      },
+      {
+        "name": "Cantilevered Podium",
+        "description": "Expansive podium that cantilevers above ground level"
+      }
+    ],
+    "sustainability": [
+      "Passive and active energy strategies",
+      "Daylight, wind, and solar ambient energy sources",
+      "Rainwater harvesting for irrigation",
+      "Microclimate enhancement through landscape design",
+      "Reduced energy, materials, water and land usage"
+    ]
+  },
+  "floors": {
+    "below_ground": [
+      {
+        "level": "B2",
+        "name_en": "Found Space / Basement 2",
+        "functions": [
+          "Exhibition (Found Space)",
+          "Large installations"
+        ]
+      },
+      {
+        "level": "B1",
+        "name_en": "Basement 1",
+        "functions": [
+          "Exhibition",
+          "Storage"
+        ]
+      },
+      {
+        "level": "B0",
+        "name_en": "Basement",
+        "functions": [
+          "Car Park",
+          "Loading",
+          "Services"
+        ]
+      }
+    ],
+    "ground_and_podium": [
+      {
+        "level": "G",
+        "name_en": "Ground Floor",
+        "functions": [
+          "Main Entrance",
+          "Lobby",
+          "Ticketing",
+          "Museum Shop"
+        ]
+      },
+      {
+        "level": "1",
+        "name_en": "Level 1",
+        "functions": [
+          "Exhibition Galleries",
+          "Cinema"
+        ]
+      },
+      {
+        "level": "2",
+        "name_en": "Level 2",
+        "functions": [
+          "Exhibition Galleries",
+          "Mediatheque",
+          "Learning Hub"
+        ]
+      },
+      {
+        "level": "3",
+        "name_en": "Level 3 / Roof Garden",
+        "functions": [
+          "Exhibition",
+          "Roof Garden (Victoria Harbour view)"
+        ]
+      }
+    ],
+    "tower": [
+      {
+        "level": "4-10",
+        "name_en": "Tower Levels 4-10",
+        "functions": [
+          "Research Centre",
+          "Offices",
+          "Administration"
+        ]
+      },
+      {
+        "level": "11",
+        "name_en": "Level 11",
+        "functions": [
+          "M+ Lounge (licensed club)",
+          "Restaurant"
+        ]
+      },
+      {
+        "level": "12",
+        "name_en": "Level 12",
+        "functions": [
+          "Restaurant",
+          "Dining"
+        ]
+      },
+      {
+        "level": "13",
+        "name_en": "Level 13",
+        "functions": [
+          "Lingnan University @WestKowloon (嶺南大學@西九龍)"
+        ]
+      },
+      {
+        "level": "14",
+        "name_en": "Level 14",
+        "functions": [
+          "Offices"
+        ]
+      },
+      {
+        "level": "15",
+        "name_en": "Level 15",
+        "functions": [
+          "The Create@HSUHK (創意薈@香港恒生大學)"
+        ]
+      },
+      {
+        "level": "16-20",
+        "name_en": "Upper Tower",
+        "functions": [
+          "Offices",
+          "Services",
+          "Plant"
+        ]
+      }
+    ],
+    "note": "Floor data compiled from HK Gov Identify API responses + M+ official info. Exact allocation may vary."
+  },
+  "facilities": {
+    "exhibitions": {
+      "total_galleries": 33,
+      "area_sqm": 17000,
+      "special_spaces": [
+        "Found Space (underground)",
+        "Roof Garden exhibitions"
+      ]
+    },
+    "cinemas": {
+      "count": 3,
+      "name": "M+ Cinema"
+    },
+    "dining": [
+      {
+        "name": "M+ Lounge",
+        "floor": "11/F",
+        "type": "Licensed Club"
+      },
+      {
+        "name": "Restaurants",
+        "floors": [
+          "11/F",
+          "12/F"
+        ]
+      },
+      {
+        "name": "Tea & Coffee Bar",
+        "floor": "G/F"
+      }
+    ],
+    "education": [
+      {
+        "name": "Learning Hub",
+        "floor": "2/F"
+      },
+      {
+        "name": "Mediatheque",
+        "floor": "2/F"
+      },
+      {
+        "name": "Research Centre",
+        "floors": "4-10/F"
+      },
+      {
+        "name": "Lingnan University @WestKowloon",
+        "floor": "13/F"
+      },
+      {
+        "name": "The Create@HSUHK",
+        "floor": "15/F"
+      }
+    ],
+    "other": [
+      {
+        "name": "Museum Shop",
+        "floor": "G/F"
+      },
+      {
+        "name": "M+ Car Park",
+        "address": "38 Museum Drive"
+      },
+      {
+        "name": "Roof Garden",
+        "floor": "3/F",
+        "view": "Victoria Harbour"
+      },
+      {
+        "name": "AED (Automated External Defibrillator)",
+        "floor": "15/F"
+      }
+    ]
+  },
+  "collection": {
+    "works_of_visual_art": 7000,
+    "archival_objects": 46000,
+    "focus_areas": [
+      "Visual Art",
+      "Design and Architecture",
+      "Moving Image",
+      "Hong Kong Visual Culture"
+    ],
+    "period": "20th and 21st centuries"
+  },
+  "api_data": {
+    "location_search": {
+      "endpoint": "https://www.map.gov.hk/gs/api/v1.0.0/locationSearch?q=38+Museum+Drive",
+      "result": {
+        "nameEN": "M+",
+        "nameZH": "M＋",
+        "addressEN": "38 MUSEUM DRIVE",
+        "addressZH": "博物館道 38號",
+        "districtEN": "Yau Tsim Mong District",
+        "x_hk80": 834441,
+        "y_hk80": 817991
+      }
+    },
+    "identify_api": {
+      "endpoint": "https://www.map.gov.hk/gs/api/v1.0.0/identify?x=834441&y=818005&lang=en",
+      "facilities_found": [
+        "M+ Cinema",
+        "M+ Lounge (Licensed Club, 11/F)",
+        "The Create@HSUHK (15/F)",
+        "AED Location"
+      ]
+    },
+    "nearby_api": {
+      "endpoint": "https://www.map.gov.hk/gs/api/v1.0.0/searchNearby?x=834441&y=818005&radius=200",
+      "results_count": 247,
+      "notable_nearby": [
+        "M+ Car Park (38 Museum Drive)",
+        "Art Park Car Park (36 Museum Drive)",
+        "Hong Kong Palace Museum (8 Museum Drive)",
+        "M+ Pavilion (28 Museum Drive)",
+        "West Gate Open Car Park"
+      ]
+    },
+    "3d_tiles": {
+      "endpoint": "https://data.map.gov.hk/api/3d-data/3dtiles/f2/tileset.json",
+      "api_key": "3967f8f365694e0798af3e7678509421",
+      "format": "Cesium 3D Tiles v1.1",
+      "region": "11 (West Kowloon area)",
+      "tile_files": [
+        "Tile_6_2_L5.b3dm",
+        "Tile_6_3_L5.b3dm",
+        "Tile_7_2_L5.b3dm",
+        "Tile_7_3_L5.b3dm",
+        "Tile_6_4_L5.b3dm",
+        "Tile_7_4_L5.b3dm",
+        "Tile_8_2_L5.b3dm",
+        "Tile_8_3_L5.b3dm",
+        "Tile_9_2_L5.b3dm",
+        "Tile_9_3_L5.b3dm",
+        "Tile_8_4_L5.b3dm",
+        "Tile_9_4_L5.b3dm"
+      ],
+      "note": "These tiles cover the West Kowloon area including M+. Individual building extraction requires parsing b3dm format."
+    },
+    "indoor_api": {
+      "endpoint": "https://mapapi.hkmapservice.gov.hk/ogc/wfs/indoor/venue_polygon",
+      "status": "NOT AVAILABLE - M+ not in indoor map system",
+      "total_venues_in_system": 717,
+      "note": "As of June 2026, M+ has not been added to the HK Gov Indoor Map system. The system mainly covers shopping centres, MTR stations, and government buildings."
+    }
+  },
+  "nearby_landmarks": [
+    {
+      "name": "Hong Kong Palace Museum",
+      "address": "8 Museum Drive",
+      "distance_m": 400
+    },
+    {
+      "name": "M+ Pavilion",
+      "address": "28 Museum Drive",
+      "distance_m": 200
+    },
+    {
+      "name": "Art Park",
+      "distance_m": 100
+    },
+    {
+      "name": "Hong Kong West Kowloon Station",
+      "distance_m": 500
+    },
+    {
+      "name": "Elements Shopping Mall",
+      "distance_m": 600
+    },
+    {
+      "name": "International Commerce Centre (ICC)",
+      "distance_m": 700
+    },
+    {
+      "name": "Victoria Harbour Waterfront Promenade",
+      "distance_m": 50
+    }
+  ],
+  "links": {
+    "official": "https://www.mplus.org.hk",
+    "architect": "https://www.herzogdemeuron.com/projects/415-m-plus/",
+    "engineer": "https://www.arup.com/projects/m-plus-building/",
+    "3d_map": "https://3d.map.gov.hk/",
+    "archdaily": "https://www.archdaily.com/958496/m-plus-museum-herzog-and-de-meuron-plus-tfp-farrells-plus-arup"
+  }
+}
